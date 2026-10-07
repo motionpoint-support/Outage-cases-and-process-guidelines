@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Outage Cases from PE</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&amp;family=Lexend:wght@400;500;600;700&amp;family=Lato:wght@400;700;900&amp;display=swap">
+<style>
+body{margin:0;font-family:'Lato',system-ui,sans-serif;background:#0E1B2E;color:#0B2545}
+a{color:#1466F0}a:hover{color:#0B4FC0}
+.stage *{box-sizing:border-box}
+.mono{font-family:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace}
+.disp{font-family:'Lexend','Lato',sans-serif}
+.paused,.paused *{animation-play-state:paused !important}
+.sh{position:absolute;left:40px;top:-4px}
+.h2{font-family:'Lexend','Lato',sans-serif;font-size:30px;font-weight:700;color:#0B2545}
+.h2s{font-size:18px;color:#3B4F6B}
+.sc{position:absolute;top:66px;height:86px;border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.sr{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.sn{font-family:'Lexend','Lato',sans-serif;width:30px;height:30px;border-radius:15px;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+.st{font-size:16px;font-weight:900;color:#0B2545;line-height:1.2}
+.tg{display:inline-flex;align-items:center;height:22px;padding:0 10px;border-radius:11px;color:#FFFFFF;font-size:11px;font-weight:900;letter-spacing:.03em;white-space:nowrap}
+.mk{position:absolute;right:-9px;bottom:-11px}
+.panel{position:absolute;left:40px;top:170px;width:1200px;height:460px;border-radius:22px;background:#FFFFFF;box-shadow:0 14px 36px rgba(11,37,69,.10);overflow:hidden}
+.win{position:absolute;left:0;top:0;width:1200px;height:460px;background:#FFFFFF}
+.ill{position:absolute;left:26px;top:26px;width:470px;height:408px;border-radius:18px;overflow:hidden}
+.tc{position:absolute;left:530px;top:30px;width:640px;display:flex;flex-direction:column;gap:12px}
+.eb{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.tt{font-family:'Lexend','Lato',sans-serif;font-size:28px;font-weight:700;color:#0B2545;line-height:1.2;margin-bottom:2px}
+.bl{display:flex;gap:12px;align-items:flex-start}
+.bn{width:26px;height:26px;border-radius:13px;font-size:14px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.bt{font-size:19px;line-height:1.4;color:#0B2545;font-weight:700}
+.lp{align-self:flex-start;margin-top:10px;height:46px;padding:0 20px 0 10px;border-radius:23px;display:inline-flex;align-items:center;gap:10px;font-size:17px;font-weight:900}
+.ex{margin-top:6px;border-radius:14px;background:#FFF7F0;border:2px dashed #C2410C;padding:12px 16px;display:flex;flex-direction:column;gap:6px}
+.exh{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#9A3412}
+.ext{font-size:17px;line-height:1.45;font-weight:700;color:#0B2545}
+.wc{position:absolute;background:#FFFFFF;border-radius:14px;box-shadow:0 10px 24px rgba(11,37,69,.14);overflow:hidden}
+.bar{height:30px;background:#E9EEF5;display:flex;align-items:center;gap:5px;padding:0 10px}
+.dot{width:8px;height:8px;border-radius:4px}
+.url{margin-left:6px;flex-grow:1;height:18px;border-radius:9px;background:#FFFFFF;font-size:11px;color:#3B4F6B;padding:0 8px;line-height:18px;white-space:nowrap;overflow:hidden}
+.ln{height:8px;border-radius:4px;background:#E3E9F2}
+.lab{font-size:12px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:#5A6B84}
+.fld{height:32px;border-radius:8px;border:2px solid #C9D3E1;display:flex;align-items:center;padding:0 10px;font-size:13px;color:#0B2545}
+.av{position:absolute}
+@keyframes panX{0%,15%{transform:translateX(0)}85%,100%{transform:translateX(-1264px)}}
+.shot{position:absolute;left:26px;top:26px;width:700px;height:408px;border-radius:14px;background:#EEF2F8;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.tc2{position:absolute;left:752px;top:30px;width:424px;display:flex;flex-direction:column;gap:12px}
+.call{margin-top:6px;border-radius:14px;background:#1466F0;color:#FFFFFF;padding:14px 18px;display:flex;flex-direction:column;gap:4px}
+.rz{display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:16px;background:#FFF7F0;border:2px solid #C2410C;color:#7C2D12;font-size:14px;font-weight:900;white-space:nowrap}
+.ch{height:40px;padding:0 16px;border-radius:20px;background:#FFFFFF;display:inline-flex;align-items:center;font-size:15px;font-weight:900}
+.row{height:44px;border-radius:12px;background:#FFFFFF;display:flex;align-items:center;gap:10px;padding:0 14px;font-size:16px;font-weight:700;color:#0B2545;box-shadow:0 4px 10px rgba(11,37,69,.06)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeOut{from{opacity:1}to{opacity:0}}
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes fromL{from{opacity:0;transform:translateX(-36px)}to{opacity:1;transform:none}}
+@keyframes fromR{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{opacity:0;transform:scale(.6)}70%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+@keyframes zoomIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@keyframes win{0%{opacity:0;transform:translateY(14px)}9%{opacity:1;transform:none}90%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-10px)}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(20,102,240,.45),0 18px 40px rgba(11,37,69,.14)}50%{box-shadow:0 0 0 16px rgba(20,102,240,0),0 18px 40px rgba(11,37,69,.14)}}
+@keyframes warnPulse{0%,100%{box-shadow:0 0 0 0 rgba(234,88,12,.55)}50%{box-shadow:0 0 0 12px rgba(234,88,12,0)}}
+@keyframes press{0%,100%{transform:scale(1)}50%{transform:scale(.94)}}
+@keyframes typeIn{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes stamp{0%{opacity:0;transform:scale(1.7) rotate(-7deg)}60%{opacity:1;transform:scale(.95) rotate(-7deg)}100%{opacity:1;transform:scale(1) rotate(-7deg)}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes march{to{stroke-dashoffset:-72}}
+@keyframes arc{from{stroke-dashoffset:302}to{stroke-dashoffset:0}}
+@keyframes pass{from{transform:translateX(0)}to{transform:translateX(196px)}}
+@keyframes toL{from{opacity:1;transform:none}to{opacity:0;transform:translate(-320px,250px) scale(.35)}}
+@keyframes toR{from{opacity:1;transform:none}to{opacity:0;transform:translate(320px,250px) scale(.35)}}
+@keyframes hiO{0%{background:#FFFFFF}100%{background:#FFF1E6;box-shadow:0 0 0 3px #C2410C}}
+@keyframes toGrey{to{background:#94A3B8}}
+@keyframes litRing{0%{box-shadow:0 0 0 0 currentColor;transform:none}8%,92%{box-shadow:0 0 0 4px currentColor,0 16px 30px rgba(11,37,69,.18);transform:translateY(-6px)}100%{box-shadow:0 0 0 0 transparent;transform:none}}
+.ctl{height:44px;min-width:44px;padding:0 14px;border-radius:10px;border:1px solid #2A3E5C;background:#15263F;color:#E6EEF8;font-family:'Lato',sans-serif;font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;cursor:pointer;white-space:nowrap}
+.ctl:hover{background:#1D3354}
+.ctl.main{background:#1466F0;border-color:#1466F0;color:#fff}
+.ctl.main:hover{background:#0B55D0}
+.chip{height:32px;padding:0 7px;letter-spacing:-.01em;border-radius:16px;border:1px solid #2A3E5C;background:transparent;color:#A9B8CC;font-family:'Lato',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.chip:hover{color:#fff;border-color:#4A6488}
+.chip.done{color:#D5E0EE;border-color:#34507A;background:#16304F}
+.chip.on{color:#0B2545;background:#8FD16F;border-color:#8FD16F}
+</style>
+<style>
+html,body{height:100%}
+body{display:flex;align-items:center;justify-content:center;overflow:hidden}
+#fit{width:1280px;height:870px;transform-origin:center center;flex-shrink:0}
+[hidden]{display:none !important}
+</style>
+</head>
+<body>
+<div id="fit">
+<div style="width: 1280px; height: 870px; background: #0E1B2E; display: flex; flex-direction: column; overflow: hidden;">
+
+<!-- hidden symbol library -->
+<svg width="0" height="0" style="position: absolute; width: 0; height: 0;" aria-hidden="true">
+<defs>
+<symbol id="dc-customer" viewBox="0 0 200 200">
+<path d="M58 88 C52 38 148 38 142 88 L146 124 C132 132 124 116 122 104 L78 104 C76 116 68 132 54 124 Z" fill="#3B2A26"></path>
+<path d="M40 200 C40 150 66 128 100 128 C134 128 160 150 160 200 Z" fill="#23A094"></path>
+<path d="M84 129 L100 152 L116 129 Z" fill="#E6F6F3"></path>
+<rect x="89" y="104" width="22" height="28" rx="8" fill="#E2A77F"></rect>
+<ellipse cx="100" cy="82" rx="32" ry="36" fill="#F1C39E"></ellipse>
+<path d="M66 76 C68 42 132 40 136 78 C118 64 94 60 70 80 Z" fill="#3B2A26"></path>
+<circle cx="88" cy="87" r="3.8" fill="#1F2937"></circle>
+<circle cx="112" cy="87" r="3.8" fill="#1F2937"></circle>
+<circle cx="79" cy="98" r="5.5" fill="#F29A86" opacity=".45"></circle>
+<circle cx="121" cy="98" r="5.5" fill="#F29A86" opacity=".45"></circle>
+<path d="M90 102 Q100 109 110 102" stroke="#A0523D" stroke-width="3" fill="none" stroke-linecap="round"></path>
+</symbol>
+<symbol id="dc-agent" viewBox="0 0 200 200">
+<path d="M40 200 C40 150 66 128 100 128 C134 128 160 150 160 200 Z" fill="#1466F0"></path>
+<path d="M84 129 L100 150 L116 129 Z" fill="#FFFFFF"></path>
+<rect x="89" y="104" width="22" height="28" rx="8" fill="#B97A55"></rect>
+<ellipse cx="68" cy="88" rx="7" ry="10" fill="#C98B63"></ellipse>
+<ellipse cx="132" cy="88" rx="7" ry="10" fill="#C98B63"></ellipse>
+<ellipse cx="100" cy="82" rx="32" ry="36" fill="#D39A72"></ellipse>
+<path d="M67 80 C62 42 138 40 133 80 C126 60 80 58 67 80 Z" fill="#1F1A17"></path>
+<circle cx="88" cy="87" r="3.8" fill="#1F2937"></circle>
+<circle cx="112" cy="87" r="3.8" fill="#1F2937"></circle>
+<path d="M89 101 Q100 109 111 101" stroke="#7A3B2A" stroke-width="3" fill="none" stroke-linecap="round"></path>
+</symbol>
+<symbol id="dc-server" viewBox="0 0 120 150">
+<rect x="10" y="6" width="100" height="40" rx="8" fill="#243B5E"></rect>
+<rect x="10" y="54" width="100" height="40" rx="8" fill="#2E4A73"></rect>
+<rect x="10" y="102" width="100" height="40" rx="8" fill="#243B5E"></rect>
+<circle cx="28" cy="26" r="5" fill="#8FD16F"></circle><circle cx="28" cy="74" r="5" fill="#8FD16F"></circle><circle cx="28" cy="122" r="5" fill="#8FD16F"></circle>
+<rect x="46" y="22" width="50" height="8" rx="4" fill="#5B7BA6"></rect><rect x="46" y="70" width="50" height="8" rx="4" fill="#5B7BA6"></rect><rect x="46" y="118" width="50" height="8" rx="4" fill="#5B7BA6"></rect>
+</symbol>
+<symbol id="dc-check" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="11" fill="#3E9B2F"></circle>
+<path d="M6.5 12.5 L10.3 16.2 L17.5 8.6" stroke="#FFFFFF" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+</symbol>
+<symbol id="dc-x" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="11" fill="#C2410C"></circle>
+<path d="M8 8l8 8M16 8l-8 8" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path>
+</symbol>
+<symbol id="dc-warn" viewBox="0 0 24 24">
+<path d="M12 3 L22 20.5 H2 Z" fill="#F2A93B" stroke="#8A5200" stroke-width="1.4" stroke-linejoin="round"></path>
+<path d="M12 9.5 V14.5" stroke="#5A3500" stroke-width="2.2" stroke-linecap="round"></path>
+<circle cx="12" cy="17.4" r="1.3" fill="#5A3500"></circle>
+</symbol>
+<symbol id="dc-ticket" viewBox="0 0 24 24">
+<path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4z" fill="none" stroke="currentColor" stroke-width="1.8"></path>
+<path d="M9 5v14" stroke="currentColor" stroke-width="1.8" stroke-dasharray="2 2.4"></path>
+</symbol>
+<symbol id="dc-clock" viewBox="0 0 24 24">
+<circle cx="12" cy="13" r="8.5" fill="none" stroke="currentColor" stroke-width="1.9"></circle>
+<path d="M12 8.5V13l3 2M10 2.5h4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path>
+</symbol>
+<symbol id="dc-phone" viewBox="0 0 24 24">
+<path d="M5 3.5h3.5l2 5-2.5 1.6a11 11 0 0 0 5.4 5.4l1.6-2.5 5 2v3.5a2 2 0 0 1-2 2A17 17 0 0 1 3 5.5a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"></path>
+</symbol>
+<symbol id="dc-cal" viewBox="0 0 24 24">
+<rect x="3" y="5" width="18" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.9"></rect>
+<path d="M16 3v4M8 3v4M3 10h18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path>
+</symbol>
+<symbol id="dc-mail" viewBox="0 0 24 24">
+<rect x="3" y="5" width="18" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.9"></rect>
+<path d="M3.5 7l8.5 6 8.5-6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"></path>
+</symbol>
+<symbol id="dc-lock" viewBox="0 0 24 24">
+<rect x="4.5" y="10.5" width="15" height="10.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.9"></rect>
+<path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.9"></path>
+<circle cx="12" cy="15.6" r="1.6" fill="currentColor"></circle>
+</symbol>
+<symbol id="dc-doc" viewBox="0 0 40 48">
+<path d="M4 4h22l10 10v30H4z" fill="#FFFFFF" stroke="#6D4AE0" stroke-width="2.4" stroke-linejoin="round"></path>
+<path d="M26 4v10h10" fill="none" stroke="#6D4AE0" stroke-width="2.4" stroke-linejoin="round"></path>
+<path d="M11 24h18M11 31h18M11 38h12" stroke="#B9A8F2" stroke-width="3" stroke-linecap="round"></path>
+</symbol>
+<symbol id="dc-img" viewBox="0 0 24 24">
+<rect x="3" y="4" width="18" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.9"></rect>
+<circle cx="9" cy="9.5" r="1.8" fill="currentColor"></circle>
+<path d="M3.5 17l5-5 4 4 3-3 5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"></path>
+</symbol>
+<symbol id="dc-play" viewBox="0 0 24 24">
+<path d="M7 4.5v15l12-7.5z" fill="currentColor"></path>
+</symbol>
+<symbol id="dc-edit" viewBox="0 0 24 24">
+<path d="M4 20h4L19 9l-4-4L4 16z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"></path>
+<path d="M13.5 6.5l4 4" fill="none" stroke="currentColor" stroke-width="1.9"></path>
+</symbol>
+</defs>
+</svg>
+
+<!-- ===================== STAGE ===================== -->
+<div id="stage" class="stage" style="position: relative; width: 1280px; height: 720px; overflow: hidden; background: #F3F6FB; flex-shrink: 0;">
+
+<div style="position: absolute; left: -160px; top: -200px; width: 560px; height: 560px; border-radius: 50%; background: #E6EEFA;"></div>
+<div style="position: absolute; right: -120px; bottom: -220px; width: 520px; height: 520px; border-radius: 50%; background: #EAF5E4;"></div>
+
+<div style="position: absolute; left: 28px; top: 14px; display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 700; color: #3B4F6B; letter-spacing: .02em;">
+<span id="steps" style="display: contents;"></span>
+<span class="disp" style="font-weight: 700; color: #0B2545; font-size: 16px;">MotionPoint Support</span>
+<span style="width: 4px; height: 4px; border-radius: 2px; background: #94A3B8;"></span>
+<span>New Agent Training &middot; Outage Cases</span>
+</div>
+
+<!-- ============ SCENE 0 · INTRO ============ -->
+<template id="scene-0">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div style="position: absolute; left: 0; top: 24px; width: 1280px; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;"><div style="font-size: 16px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; color: #3E8A2A; animation: up .8s .4s both;">Customer Support &middot; New Agent Training</div><h1 class="disp" style="margin: 0; font-size: 60px; line-height: 1.05; font-weight: 700; color: #0B2545; animation: up .9s .9s both;">Outage cases from PE</h1><p style="margin: 0; font-size: 23px; color: #3B4F6B; max-width: 1000px; animation: up .9s 1.6s both;">A PE alerts Support to an outage, on the origin or translated site, that needs fast customer coordination.</p></div>
+<div style="position: absolute; left: 40px; top: 230px; width: 380px; height: 170px; border-radius: 16px; background: #DCE7F7; border: 3px solid #1466F0; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 5s both;"><span class="eb" style="color: #1466F0;">What</span><span style="font-size: 17px; font-weight: 700; color: #0B2545; line-height: 1.4;">A PE makes Support aware of an outage through a case that needs urgent customer coordination.</span></div>
+<div style="position: absolute; left: 450px; top: 230px; width: 380px; height: 170px; border-radius: 16px; background: #FCE3CC; border: 3px solid #C2410C; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 9s both;"><span class="eb" style="color: #C2410C;">Why</span><span style="font-size: 17px; font-weight: 700; color: #0B2545; line-height: 1.4;">Outages are time-critical, and depend on the customer taking action quickly.</span></div>
+<div style="position: absolute; left: 860px; top: 230px; width: 380px; height: 170px; border-radius: 16px; background: #E5F4DE; border: 3px solid #2F7A22; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 13s both;"><span class="eb" style="color: #2F7A22;">Who owns it</span><span style="font-size: 17px; font-weight: 700; color: #0B2545; line-height: 1.4;">You. You follow up with the Emergency POCs and drive the customer response the PE needs.</span></div>
+<div style="position: absolute; left: 160px; top: 440px; width: 960px; height: 104px; border-radius: 20px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; gap: 18px; padding: 0 30px; animation: up .7s 19s both;"><svg width="40" height="40" style="flex-shrink: 0; color: #F6C453;"><use href="#dc-warn"></use></svg><span style="font-size: 20px; font-weight: 900; line-height: 1.4;">Outage cases are always Critical, and can only be closed once everything is resolved.</span></div>
+</div>
+</template>
+
+<!-- ============ SCENE 1 · WHICH PROCEDURE ============ -->
+<template id="scene-1">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Part 1: Which procedure?</div><div class="h2s">It depends on the customer&rsquo;s tier, and who&rsquo;s at fault.</div></div>
+<div style="position: absolute; left: 440px; top: 62px; width: 400px; height: 64px; border-radius: 16px; background: #E3E9F2; border: 3px solid #0B2545; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 1.5s both; align-items: center; text-align: center; padding: 8px 14px;"><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">PE outage case arrives</span></div>
+<svg width="24" height="34" style="position: absolute; left: 628px; top: 128px; animation: fadeIn .4s 2.5s both;"><path d="M12 2 V30 M4 22 L12 31 L20 22" stroke="#94A3B8" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<div style="position: absolute; left: 400px; top: 164px; width: 480px; height: 84px; border-radius: 16px; background: #DCE7F7; border: 3px solid #1466F0; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 3s both; align-items: center; text-align: center;"><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Tier 1 customer?</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">24/7 Entitlement in Salesforce</span></div>
+<svg width="1280" height="648" style="position: absolute; left: 0; top: 0; pointer-events: none; animation: fadeIn .4s 7s both;"><path d="M520 248 L330 300" stroke="#94A3B8" stroke-width="3" fill="none" stroke-linecap="round"></path><circle cx="330" cy="300" r="5" fill="#94A3B8"></circle></svg>
+<span class="tg" style="position: absolute; left: 370px; top: 262px; background: #2F7A22; animation: pop .4s 7.5s both;">Yes</span>
+<svg width="1280" height="648" style="position: absolute; left: 0; top: 0; pointer-events: none; animation: fadeIn .4s 31s both;"><path d="M760 248 L960 300" stroke="#94A3B8" stroke-width="3" fill="none" stroke-linecap="round"></path><circle cx="960" cy="300" r="5" fill="#94A3B8"></circle></svg>
+<span class="tg" style="position: absolute; left: 870px; top: 262px; background: #B42318; animation: pop .4s 31.5s both;">No</span>
+<div style="position: absolute; left: 160px; top: 300px; width: 340px; height: 66px; border-radius: 16px; background: #DCE7F7; border: 3px solid #1466F0; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 9s both; align-items: center; text-align: center; padding: 8px 14px;"><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Who&rsquo;s at fault?</span></div>
+<svg width="1280" height="648" style="position: absolute; left: 0; top: 0; pointer-events: none; animation: fadeIn .4s 12s both;"><path d="M260 366 L180 400" stroke="#94A3B8" stroke-width="3" fill="none" stroke-linecap="round"></path><circle cx="180" cy="400" r="5" fill="#94A3B8"></circle></svg>
+<svg width="1280" height="648" style="position: absolute; left: 0; top: 0; pointer-events: none; animation: fadeIn .4s 20s both;"><path d="M400 366 L480 400" stroke="#94A3B8" stroke-width="3" fill="none" stroke-linecap="round"></path><circle cx="480" cy="400" r="5" fill="#94A3B8"></circle></svg>
+<div style="position: absolute; left: 40px; top: 400px; width: 280px; height: 228px; border-radius: 16px; background: #FFF1F0; border: 3px solid #B42318; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 13s both;"><span class="tg" style="background: #B42318; align-self: flex-start;">MotionPoint at fault</span><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Full P1 procedure</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">Emergency POCs, the P1 Teams chat, follow-ups every 2 hours, and RCA if requested.</span></div>
+<div style="position: absolute; left: 340px; top: 400px; width: 280px; height: 228px; border-radius: 16px; background: #FCE3CC; border: 3px solid #C2410C; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 21s both;"><span class="tg" style="background: #C2410C; align-self: flex-start;">Customer at fault</span><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">No P1 procedure</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">Make the customer aware, and follow up every 2 hours until it&rsquo;s resolved.</span></div>
+<div style="position: absolute; left: 700px; top: 300px; width: 540px; height: 328px; border-radius: 16px; background: #DDF3F1; border: 3px solid #0F7C7A; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 32s both;"><span class="tg" style="background: #0F7C7A; align-self: flex-start;">Not Tier 1</span><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Work it as a Critical case, no P1 chat</span><div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;"><div class="row" style="height: auto; min-height: 40px; padding: 6px 12px; font-size: 15px; box-shadow: none; animation: up .45s 34s both;"><svg width="20" height="20" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span>Notify the Emergency POCs.</span></div><div class="row" style="height: auto; min-height: 40px; padding: 6px 12px; font-size: 15px; box-shadow: none; animation: up .45s 37s both;"><svg width="20" height="20" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span>Follow up every 2 hours until the customer responds.</span></div><div class="row" style="height: auto; min-height: 40px; padding: 6px 12px; font-size: 15px; box-shadow: none; animation: up .45s 40s both;"><svg width="20" height="20" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span>Act on whatever the PE needs the customer to do.</span></div><div class="row" style="height: auto; min-height: 40px; padding: 6px 12px; font-size: 15px; box-shadow: none; animation: up .45s 44s both;"><svg width="20" height="20" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span><b>Customer at fault:</b> follow up until it&rsquo;s resolved.</span></div><div class="row" style="height: auto; min-height: 40px; padding: 6px 12px; font-size: 15px; box-shadow: none; animation: up .45s 47s both;"><svg width="20" height="20" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span><b>MotionPoint at fault:</b> keep the customer updated as PE shares news.</span></div></div></div>
+<div style="position: absolute; left: 40px; top: 66px; width: 1200px; height: 566px; border-radius: 22px; background: #FFFFFF; box-shadow: 0 20px 50px rgba(11,37,69,.22); padding: 28px 36px; display: flex; flex-direction: column; gap: 22px; justify-content: center; animation: pop .6s 56s both;"><span class="disp" style="font-size: 30px; font-weight: 700; color: #0B2545;">Two more rules</span><div style="display: flex; gap: 24px; height: 300px;"><div style="flex: 1; border-radius: 18px; background: #DCE7F7; border: 3px solid #1466F0; padding: 24px; display: flex; flex-direction: column; gap: 14px; animation: fromL .6s 57s both;"><span class="eb" style="color: #1466F0;">Case came from the customer?</span><span class="disp" style="font-size: 26px; font-weight: 700; color: #0B2545; line-height: 1.3;">Same logic.</span><span style="font-size: 19px; font-weight: 700; color: #3B4F6B; line-height: 1.45;">Tier 1 or not, follow the same procedure as a case from PE.</span></div><div style="flex: 1; border-radius: 18px; background: #FFF1F0; border: 3px solid #B42318; padding: 24px; display: flex; flex-direction: column; gap: 14px; animation: fromR .6s 63s both;"><span class="eb" style="color: #B42318;">Came in as Standard?</span><div style="display: flex; flex-direction: column; gap: 10px;"><div style="display: flex; align-items: center; gap: 10px;"><span class="lab" style="width: 90px; flex-shrink: 0;">Priority</span><div class="fld" style="flex-grow: 1;"><span class="" style="display: inline-block; font-weight: 600; animation: typeIn .8s 65s both;"><s style="color: #8A99AD;">Standard</s> &rarr; <b style="color: #B42318;">Critical</b></span></div></div><div style="display: flex; align-items: center; gap: 10px;"><span class="lab" style="width: 90px; flex-shrink: 0;">Due date</span><div class="fld" style="flex-grow: 1;"><span class="" style="display: inline-block; font-weight: 600; animation: typeIn .8s 67s both;"><b>Same day</b></span></div></div></div><span style="font-size: 18px; font-weight: 700; color: #7F1D1D; line-height: 1.45; animation: fadeIn .5s 69s both;">Every outage case is Critical.</span></div></div></div>
+</div>
+</template>
+
+<!-- ============ SCENE 2 · P1 EVENTS ============ -->
+<template id="scene-2">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Part 2: What counts as a P1 event?</div><div class="h2s">On the origin site or the translated site.</div></div>
+<div style="position: absolute; left: 40px; top: 74px; width: 224px; height: 156px; border-radius: 16px; background: #FFF1F0; border: 3px solid #B42318; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 2s both;"><span style="width: 44px; height: 44px; border-radius: 22px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="24" height="24" style="color: #B42318;"><use href="#dc-x"></use></svg></span><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Site down</span></div>
+<div style="position: absolute; left: 284px; top: 74px; width: 224px; height: 156px; border-radius: 16px; background: #FFF1F0; border: 3px solid #B42318; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 4.4s both;"><span style="width: 44px; height: 44px; border-radius: 22px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="24" height="24" style="color: #B42318;"><use href="#dc-doc"></use></svg></span><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Home page displays blank</span></div>
+<div style="position: absolute; left: 528px; top: 74px; width: 224px; height: 156px; border-radius: 16px; background: #FFF1F0; border: 3px solid #B42318; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 6.8s both;"><span style="width: 44px; height: 44px; border-radius: 22px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="24" height="24" style="color: #B42318;"><use href="#dc-x"></use></svg></span><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Checkout flow broken</span></div>
+<div style="position: absolute; left: 772px; top: 74px; width: 224px; height: 156px; border-radius: 16px; background: #FFF1F0; border: 3px solid #B42318; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 9.2s both;"><span style="width: 44px; height: 44px; border-radius: 22px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="24" height="24" style="color: #B42318;"><use href="#dc-x"></use></svg></span><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Cannot add items to cart / bag</span></div>
+<div style="position: absolute; left: 1016px; top: 74px; width: 224px; height: 156px; border-radius: 16px; background: #FFF1F0; border: 3px solid #B42318; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 11.6s both;"><span style="width: 44px; height: 44px; border-radius: 22px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="24" height="24" style="color: #B42318;"><use href="#dc-lock"></use></svg></span><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Login page blank or inaccessible</span></div>
+<div style="position: absolute; left: 40px; top: 250px; width: 224px; height: 156px; border-radius: 16px; background: #FCE3CC; border: 3px solid #C2410C; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 14s both;"><span style="width: 44px; height: 44px; border-radius: 22px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="24" height="24" style="color: #B42318;"><use href="#dc-img"></use></svg></span><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Home page displays broken</span></div>
+<div style="position: absolute; left: 284px; top: 250px; width: 224px; height: 156px; border-radius: 16px; background: #FCE3CC; border: 3px solid #C2410C; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 16.4s both;"><span style="width: 44px; height: 44px; border-radius: 22px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="24" height="24" style="color: #B42318;"><use href="#dc-img"></use></svg></span><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Main logo showing broken</span></div>
+<div style="position: absolute; left: 528px; top: 250px; width: 224px; height: 156px; border-radius: 16px; background: #FCE3CC; border: 3px solid #C2410C; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 18.8s both;"><span style="width: 44px; height: 44px; border-radius: 22px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="24" height="24" style="color: #B42318;"><use href="#dc-clock"></use></svg></span><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Latency, performance</span></div>
+<div style="position: absolute; left: 772px; top: 250px; width: 224px; height: 156px; border-radius: 16px; background: #FCE3CC; border: 3px solid #C2410C; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 21.2s both;"><span style="width: 44px; height: 44px; border-radius: 22px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="24" height="24" style="color: #B42318;"><use href="#dc-play"></use></svg></span><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Translated site redirects to origin</span></div>
+<div style="position: absolute; left: 1016px; top: 250px; width: 224px; height: 156px; border-radius: 16px; background: #FCE3CC; border: 3px solid #C2410C; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 23.6s both;"><span style="width: 44px; height: 44px; border-radius: 22px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="24" height="24" style="color: #B42318;"><use href="#dc-mail"></use></svg></span><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Translated site loads in English</span></div>
+<div style="position: absolute; left: 40px; top: 450px; width: 1200px; height: 90px; border-radius: 20px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; gap: 18px; padding: 0 30px; animation: up .7s 28s both;"><svg width="36" height="36" style="flex-shrink: 0; color: #F6C453;"><use href="#dc-warn"></use></svg><span style="font-size: 20px; font-weight: 900; line-height: 1.4;">P1 event + Tier 1 customer + MotionPoint at fault = the full P1 procedure.</span></div>
+<div style="position: absolute; left: 40px; top: 560px; width: 1200px; display: flex; justify-content: center; animation: up .6s 34s both;"><span class="ch" style="height: 48px; font-size: 17px; color: #0B2545; box-shadow: 0 6px 16px rgba(11,37,69,.10);">Speed and communication matter most, but the paperwork still has to happen.</span></div>
+</div>
+</template>
+
+<!-- ============ SCENE 3 · NOTIFY ============ -->
+<template id="scene-3">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Part 3: Notify the Emergency POCs</div><div class="h2s">Every outage case, Tier 1 or not.</div></div>
+<div class="sc" style="left: 40px; width: 389.33px; background: #FFF1F0; color: #B42318; animation: up .6s 1.4s both, litRing 18s 4s both;"><div class="sr"><span class="sn" style="background: #B42318;">1</span><span class="tg" style="background: #B42318;">Critical</span></div><div class="st">The PE case</div><svg class="mk" width="28" height="28" style="animation: pop .5s 21.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 445.33px; width: 389.33px; background: #FFF1F0; color: #B42318; animation: up .6s 1.6s both, litRing 18s 22s both;"><div class="sr"><span class="sn" style="background: #B42318;">2</span><span class="tg" style="background: #B42318;">Related Contacts</span></div><div class="st">Find the Emergency POCs</div><svg class="mk" width="28" height="28" style="animation: pop .5s 39.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 850.67px; width: 389.33px; background: #FFF1F0; color: #B42318; animation: up .6s 1.8s both, litRing 18s 40s both;"><div class="sr"><span class="sn" style="background: #B42318;">3</span><span class="tg" style="background: #B42318;">Details + action</span></div><div class="st">Email them</div><svg class="mk" width="28" height="28" style="animation: pop .5s 57.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="panel" style="animation: up .7s 2.2s both;">
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #8A99AD; animation: fadeOut .5s 3.8s forwards;">First, reach the customer.</div>
+<div class="win" style="animation: win 18s 4s both;">
+<div class="shot" style="background: #FFF1F0; display: block;"><div class="wc" style="left: 40px; top: 26px; width: 620px; height: 356px; animation: zoomIn .6s 4.5s both;"><div style="height: 40px; background: #0B5CAB; color: #FFFFFF; display: flex; align-items: center; gap: 10px; padding: 0 16px; font-size: 14px; font-weight: 900;"><span style="width: 24px; height: 24px; border-radius: 6px; background: #FFFFFF; color: #0B5CAB; display: flex; align-items: center; justify-content: center; font-size: 11px;">SF</span>Case &middot; Outage &middot; [Customer]</div><div style="padding: 14px 18px; display: flex; flex-direction: column; gap: 10px;"><div style="display: flex; flex-direction: column; gap: 3px;"><span class="lab" style="font-size: 10px;">Case origin</span><div style="height: 30px; border-radius: 7px; border: 1px solid #CBD2DC; background: #FFFFFF; display: flex; align-items: center; padding: 0 9px; font-size: 13px; font-weight: 700; color: #0B2545; animation: pop .45s 5.2s both;">Platform Engineering (PE)</div></div><div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;"><div style="display: flex; flex-direction: column; gap: 3px;"><span class="lab" style="font-size: 10px;">Priority</span><div style="height: 30px; border-radius: 7px; border: 2px solid #1466F0; background: #EAF2FF; display: flex; align-items: center; padding: 0 9px; font-size: 13px; font-weight: 700; color: #0B2545; animation: pop .45s 6s both;"><b style="color: #B42318;">Critical</b></div></div><div style="display: flex; flex-direction: column; gap: 3px;"><span class="lab" style="font-size: 10px;">Owner</span><div style="height: 30px; border-radius: 7px; border: 1px solid #CBD2DC; background: #FFFFFF; display: flex; align-items: center; padding: 0 9px; font-size: 13px; font-weight: 700; color: #0B2545; animation: pop .45s 9s both;">You (via Omnichannel)</div></div></div><div style="display: flex; flex-direction: column; gap: 3px;"><span class="lab" style="font-size: 10px;">URLs and languages</span><div style="height: 30px; border-radius: 7px; border: 1px solid #CBD2DC; background: #FFFFFF; display: flex; align-items: center; padding: 0 9px; font-size: 13px; font-weight: 700; color: #0B2545; animation: pop .45s 6.8s both;">es.example.com &middot; Spanish</div></div><div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;"><div style="display: flex; flex-direction: column; gap: 3px;"><span class="lab" style="font-size: 10px;">Since</span><div style="height: 30px; border-radius: 7px; border: 1px solid #CBD2DC; background: #FFFFFF; display: flex; align-items: center; padding: 0 9px; font-size: 13px; font-weight: 700; color: #0B2545; animation: pop .45s 7.4s both;">9:40 AM ET</div></div><div style="display: flex; flex-direction: column; gap: 3px;"><span class="lab" style="font-size: 10px;">Whose issue</span><div style="height: 30px; border-radius: 7px; border: 1px solid #CBD2DC; background: #FFFFFF; display: flex; align-items: center; padding: 0 9px; font-size: 13px; font-weight: 700; color: #0B2545; animation: pop .45s 8s both;">MotionPoint / Customer</div></div></div></div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #B42318;">Notify &middot; 1 of 3</div>
+<div class="tt" style="font-size: 26px;">The PE case reaches you</div>
+<div class="bl" style="animation: fromR .6s 5.5s both;"><span class="bn" style="background: #FFF1F0; color: #B42318;">1</span><span class="bt" style="font-size: 18px;">PE adds the URLs, languages, timing, and whose issue it is.</span></div>
+<div class="bl" style="animation: fromR .6s 7.5s both;"><span class="bn" style="background: #FFF1F0; color: #B42318;">2</span><span class="bt" style="font-size: 18px;">Priority is always Critical.</span></div>
+<div class="bl" style="animation: fromR .6s 9.5s both;"><span class="bn" style="background: #FFF1F0; color: #B42318;">3</span><span class="bt" style="font-size: 18px;">Omnichannel assigns it to you: you&rsquo;re the case owner.</span></div>
+<div class="call" style="background: #0B2545; animation: pop .5s 13s both;"><span class="lab" style="color: #FFFFFF; opacity: .8;">Priority</span><span style="font-size: 18px; font-weight: 900; line-height: 1.35;">Came in as Standard? Change it to Critical, due date the same day.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 18s 22s both;">
+<div class="shot" style="background: #DCE7F7; display: block;"><div class="wc" style="left: 30px; top: 26px; width: 640px; height: 356px; animation: zoomIn .6s 22.5s both;"><div style="height: 40px; background: #0B5CAB; color: #FFFFFF; display: flex; align-items: center; gap: 10px; padding: 0 16px; font-size: 14px; font-weight: 900;"><span style="width: 24px; height: 24px; border-radius: 6px; background: #FFFFFF; color: #0B5CAB; display: flex; align-items: center; justify-content: center; font-size: 11px;">SF</span>Business Entity &rsaquo; Related Contacts</div><div style="padding: 14px 18px; display: flex; flex-direction: column; gap: 10px;"><div style="display: grid; grid-template-columns: 1.1fr 1.6fr 1fr 1.1fr 1fr; gap: 6px; align-items: end; padding: 6px 8px; border-bottom: 2px solid #E3E9F2; font-size: 11px; font-weight: 900; color: #0B2545;"><span>Contact Name</span><span>Email</span><span>Project Contact</span><span style="background: #FFF59D; padding: 3px 5px; border-radius: 4px; animation: pop .5s 25s both;">Emergency Contact</span><span>Invoicing</span></div><div style="display: grid; grid-template-columns: 1.1fr 1.6fr 1fr 1.1fr 1fr; gap: 6px; align-items: center; min-height: 44px; padding: 0 8px; border-bottom: 1px solid #E3E9F2; font-size: 12px; background: #FFF1F0; animation: up .4s 23.5s both;"><span style="color: #0B5CAB; font-weight: 700;">Alex Rivera</span><span style="color: #0B5CAB;">alex.rivera@example.com</span><span style="display: flex; justify-content: center;"><span style="display: inline-block; width: 18px; height: 18px; border-radius: 4px; border: 2px solid #A9B8CC;"></span></span><span style="display: flex; justify-content: center; border: 3px solid #D92D20; border-radius: 4px; padding: 6px 0;"><span style="display: inline-flex; width: 18px; height: 18px; border-radius: 4px; border: 2px solid #5A6B84; align-items: center; justify-content: center;"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3" stroke="#3B4F6B" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></span><span style="display: flex; justify-content: center;"><span style="display: inline-block; width: 18px; height: 18px; border-radius: 4px; border: 2px solid #A9B8CC;"></span></span></div><div style="display: grid; grid-template-columns: 1.1fr 1.6fr 1fr 1.1fr 1fr; gap: 6px; align-items: center; min-height: 44px; padding: 0 8px; border-bottom: 1px solid #E3E9F2; font-size: 12px; background: #FFF1F0; animation: up .4s 24s both;"><span style="color: #0B5CAB; font-weight: 700;">Sam Patel</span><span style="color: #0B5CAB;">sam.patel@example.com</span><span style="display: flex; justify-content: center;"><span style="display: inline-flex; width: 18px; height: 18px; border-radius: 4px; border: 2px solid #5A6B84; align-items: center; justify-content: center;"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3" stroke="#3B4F6B" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></span><span style="display: flex; justify-content: center; border: 3px solid #D92D20; border-radius: 4px; padding: 6px 0;"><span style="display: inline-flex; width: 18px; height: 18px; border-radius: 4px; border: 2px solid #5A6B84; align-items: center; justify-content: center;"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3" stroke="#3B4F6B" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></span><span style="display: flex; justify-content: center;"><span style="display: inline-flex; width: 18px; height: 18px; border-radius: 4px; border: 2px solid #5A6B84; align-items: center; justify-content: center;"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.5 L5 9 L10 3" stroke="#3B4F6B" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></span></div><div style="display: grid; grid-template-columns: 1.1fr 1.6fr 1fr 1.1fr 1fr; gap: 6px; align-items: center; min-height: 44px; padding: 0 8px; border-bottom: 1px solid #E3E9F2; font-size: 12px;  animation: up .4s 24.5s both;"><span style="color: #0B5CAB; font-weight: 700;">Casey Kim</span><span style="color: #0B5CAB;">casey.kim@example.com</span><span style="display: flex; justify-content: center;"><span style="display: inline-block; width: 18px; height: 18px; border-radius: 4px; border: 2px solid #A9B8CC;"></span></span><span style="display: flex; justify-content: center;"><span style="display: inline-block; width: 18px; height: 18px; border-radius: 4px; border: 2px solid #A9B8CC;"></span></span><span style="display: flex; justify-content: center;"><span style="display: inline-block; width: 18px; height: 18px; border-radius: 4px; border: 2px solid #A9B8CC;"></span></span></div></div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #B42318;">Notify &middot; 2 of 3</div>
+<div class="tt" style="font-size: 26px;">Find the Emergency POCs</div>
+<div class="bl" style="animation: fromR .6s 23.5s both;"><span class="bn" style="background: #FFF1F0; color: #B42318;">1</span><span class="bt" style="font-size: 18px;">Open the customer&rsquo;s Business Entity.</span></div>
+<div class="bl" style="animation: fromR .6s 25s both;"><span class="bn" style="background: #FFF1F0; color: #B42318;">2</span><span class="bt" style="font-size: 18px;">Click Related Contacts.</span></div>
+<div class="bl" style="animation: fromR .6s 27s both;"><span class="bn" style="background: #FFF1F0; color: #B42318;">3</span><span class="bt" style="font-size: 18px;">Notify every contact checked as Emergency Contact.</span></div>
+<div class="call" style="background: #0B2545; animation: pop .5s 32s both;"><span class="lab" style="color: #FFFFFF; opacity: .8;">Note</span><span style="font-size: 18px; font-weight: 900; line-height: 1.35;">Contacts shown are examples only.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 18s 40s both;">
+<div class="shot" style="background: #FFF1F0; display: block;"><div class="wc" style="left: 40px; top: 30px; width: 620px; height: 346px; animation: zoomIn .6s 40.4s both;"><div style="display: flex; border-bottom: 1px solid #E3E9F2;"><span style="padding: 10px 16px; font-size: 13px; font-weight: 900; color: #1466F0; border-bottom: 3px solid #1466F0;">Email</span><span style="padding: 10px 16px; font-size: 13px; font-weight: 900; color: #5A6B84;">Post</span><span style="padding: 10px 16px; font-size: 13px; font-weight: 900; color: #5A6B84;">Track &amp; Reassign</span></div><div style="padding: 16px 20px; display: flex; flex-direction: column; gap: 6px;"><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 41s both;"><b>To:</b> Emergency POCs &nbsp; <b>Subject:</b> Urgent: outage on es.example.com</div><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 42.1s both;">Hi [Name],</div><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 43.2s both;">Our Platform Engineering team detected an outage on your Spanish site, es.example.com, since 9:40 AM ET. The home page loads blank.</div><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 44.3s both;"><b>Action needed:</b> please confirm your origin site is up, and whitelist the IPs below so we can reach it: [IP list]</div><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 45.4s both;">We&rsquo;ll follow up every 2 hours until this is resolved.</div></div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #B42318;">Notify &middot; 3 of 3</div>
+<div class="tt" style="font-size: 26px;">Email the Emergency POCs</div>
+<div class="bl" style="animation: fromR .6s 42s both;"><span class="bn" style="background: #FFF1F0; color: #B42318;">1</span><span class="bt" style="font-size: 18px;">Give the details: site, languages, since when, what&rsquo;s broken.</span></div>
+<div class="bl" style="animation: fromR .6s 45s both;"><span class="bn" style="background: #FFF1F0; color: #B42318;">2</span><span class="bt" style="font-size: 18px;">Say exactly what you need them to do.</span></div>
+<div class="call" style="background: #0B2545; animation: pop .5s 50s both;"><span class="lab" style="color: #FFFFFF; opacity: .8;">Due date</span><span style="font-size: 18px; font-weight: 900; line-height: 1.35;">Critical case: move the due date to the next day as needed.</span></div>
+</div>
+</div>
+</div>
+</div>
+</template>
+
+<!-- ============ SCENE 4 · P1 CHAT ============ -->
+<template id="scene-4">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Part 4: The P1 Teams chat</div><div class="h2s">Tier 1 customer, MotionPoint at fault.</div></div>
+<div class="sc" style="left: 40px; width: 592px; background: #E3E9F2; color: #0B2545; animation: up .6s 1.4s both, litRing 22s 4s both;"><div class="sr"><span class="sn" style="background: #0B2545;">1</span><span class="tg" style="background: #0B2545;">P1 + case #</span></div><div class="st">Open the chat</div><svg class="mk" width="28" height="28" style="animation: pop .5s 25.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 648px; width: 592px; background: #E3E9F2; color: #0B2545; animation: up .6s 1.6s both, litRing 22s 26s both;"><div class="sr"><span class="sn" style="background: #0B2545;">2</span><span class="tg" style="background: #0B2545;">Every update</span></div><div class="st">Keep it updated</div><svg class="mk" width="28" height="28" style="animation: pop .5s 47.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="panel" style="animation: up .7s 2.2s both;">
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #8A99AD; animation: fadeOut .5s 3.8s forwards;">Loop in the MotionPointers.</div>
+<div class="win" style="animation: win 22s 4s both;">
+<div class="shot" style="background: #EEF0FB; display: block;"><div class="wc" style="left: 30px; top: 18px; width: 640px; height: 372px; animation: zoomIn .6s 4.4s both;"><div style="height: 46px; background: #464EB8; color: #FFFFFF; display: flex; align-items: center; gap: 10px; padding: 0 16px; font-size: 15px; font-weight: 900;"><span style="width: 30px; height: 30px; border-radius: 8px; background: #B42318; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 12px;">P1</span><span style="animation: typeIn 1s 5.2s both; display: inline-block;">P1 &middot; Case [Case #] &middot; [Customer]</span></div><div style="padding: 14px 18px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Members</span><div style="display: flex; flex-wrap: wrap; gap: 8px;"><span class="ch" style="height: 40px; font-size: 14px; color: #0B2545; border: 2px solid #464EB8; animation: pop .45s 7s both;">The PE involved</span><span class="ch" style="height: 40px; font-size: 14px; color: #0B2545; border: 2px solid #464EB8; animation: pop .45s 7.8s both;">The Account CXM</span><span class="ch" style="height: 40px; font-size: 14px; color: #0B2545; border: 2px solid #464EB8; animation: pop .45s 8.6s both;">The P1 escalation list</span></div><span class="lab" style="margin-top: 6px;">Pinned</span><div class="row" style="height: 52px; font-size: 15px; background: #EAF2FF; border: 2px solid #1466F0; box-shadow: none; animation: pop .5s 10.5s both;"><span style="width: 26px; height: 26px; border-radius: 6px; background: #0B5CAB; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900;">SF</span>Salesforce case [Case #]: linked</div></div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #0B2545;">P1 chat &middot; 1 of 2</div>
+<div class="tt" style="font-size: 26px;">Open the P1 Teams chat</div>
+<div class="bl" style="animation: fromR .6s 5.5s both;"><span class="bn" style="background: #E3E9F2; color: #0B2545;">1</span><span class="bt" style="font-size: 18px;">Tier 1 + MotionPoint at fault only.</span></div>
+<div class="bl" style="animation: fromR .6s 6.5s both;"><span class="bn" style="background: #E3E9F2; color: #0B2545;">2</span><span class="bt" style="font-size: 18px;">Label it P1, with the case number in the title.</span></div>
+<div class="bl" style="animation: fromR .6s 8s both;"><span class="bn" style="background: #E3E9F2; color: #0B2545;">3</span><span class="bt" style="font-size: 18px;">Add the PE involved, the Account CXM and the P1 escalation list.</span></div>
+<div class="bl" style="animation: fromR .6s 11s both;"><span class="bn" style="background: #E3E9F2; color: #0B2545;">4</span><span class="bt" style="font-size: 18px;">Link the Salesforce case so everyone can reach it.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 22s 26s both;">
+<div class="shot" style="background: #E3E9F2; display: block;"><div class="wc" style="left: 30px; top: 18px; width: 640px; height: 372px; animation: zoomIn .6s 26.4s both;"><div style="height: 42px; background: #464EB8; color: #FFFFFF; display: flex; align-items: center; gap: 10px; padding: 0 16px; font-size: 14px; font-weight: 900;"><span style="width: 26px; height: 26px; border-radius: 13px; background: #FFFFFF; color: #464EB8; display: flex; align-items: center; justify-content: center; font-size: 12px;">P1</span>Teams chat &middot; P1 &middot; Case [Case #] &middot; [Customer]</div><div style="margin: 14px 16px; padding: 12px 16px; border-radius: 12px; background: #EEF0FB; display: flex; flex-direction: column; gap: 4px;"><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 27.2s both;"><b>10:05 &middot; You:</b> Emergency POCs notified by email and phone.</div><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 28.3s both;"><b>10:20 &middot; PE:</b> The customer&rsquo;s firewall is blocking our IPs.</div><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 29.4s both;"><b>10:25 &middot; You:</b> Sent the customer the IP list to whitelist.</div><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 30.5s both;"><b>12:25 &middot; You:</b> 2-hour follow-up sent. No reply yet.</div><div style="font-size: 15px; line-height: 1.45; color: #0B2545; animation: fadeIn .5s 31.6s both;"><b>13:10 &middot; You:</b> Customer whitelisted the IPs. PE is confirming.</div></div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #0B2545;">P1 chat &middot; 2 of 2</div>
+<div class="tt" style="font-size: 26px;">Keep the chat updated</div>
+<div class="bl" style="animation: fromR .6s 28s both;"><span class="bn" style="background: #E3E9F2; color: #0B2545;">1</span><span class="bt" style="font-size: 18px;">Post every development.</span></div>
+<div class="bl" style="animation: fromR .6s 31s both;"><span class="bn" style="background: #E3E9F2; color: #0B2545;">2</span><span class="bt" style="font-size: 18px;">Keep PE activity in the chat, not in side conversations.</span></div>
+<div class="bl" style="animation: fromR .6s 34s both;"><span class="bn" style="background: #E3E9F2; color: #0B2545;">3</span><span class="bt" style="font-size: 18px;">Everyone stays in sync until it&rsquo;s resolved.</span></div>
+</div>
+</div>
+</div>
+</div>
+</template>
+
+<!-- ============ SCENE 5 · FOLLOW UP ============ -->
+<template id="scene-5">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Part 5: Follow up and act</div><div class="h2s">Drive the customer response the PE needs.</div></div>
+<div class="sc" style="left: 40px; width: 389.33px; background: #FCE3CC; color: #C2410C; animation: up .6s 1.4s both, litRing 18s 4s both;"><div class="sr"><span class="sn" style="background: #C2410C;">1</span><span class="tg" style="background: #C2410C;">Follow up</span></div><div class="st">Every 2 hours</div><svg class="mk" width="28" height="28" style="animation: pop .5s 21.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 445.33px; width: 389.33px; background: #DDF3F1; color: #0F7C7A; animation: up .6s 1.6s both, litRing 18s 22s both;"><div class="sr"><span class="sn" style="background: #0F7C7A;">2</span><span class="tg" style="background: #0F7C7A;">Customer</span></div><div class="st">Act on PE&rsquo;s instructions</div><svg class="mk" width="28" height="28" style="animation: pop .5s 39.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 850.67px; width: 389.33px; background: #DCE7F7; color: #1466F0; animation: up .6s 1.8s both, litRing 18s 40s both;"><div class="sr"><span class="sn" style="background: #1466F0;">3</span><span class="tg" style="background: #1466F0;">Responses</span></div><div class="st">What comes back?</div><svg class="mk" width="28" height="28" style="animation: pop .5s 57.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="panel" style="animation: up .7s 2.2s both;">
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #8A99AD; animation: fadeOut .5s 3.8s forwards;">Until it&rsquo;s resolved.</div>
+<div class="win" style="animation: win 18s 4s both;">
+<div class="shot" style="background: #FCE3CC; display: block;"><div style="position: absolute; left: 60px; top: 120px; width: 580px; height: 4px; background: #CBD2DC;"></div><div style="position: absolute; left: 20px; top: 76px; width: 120px; display: flex; flex-direction: column; align-items: center; gap: 8px; animation: pop .5s 5s both;"><span style="font-size: 14px; font-weight: 900; color: #0B2545;">10:00</span><span style="width: 44px; height: 44px; border-radius: 22px; background: #B42318; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" style="color: #FFFFFF;"><use href="#dc-mail"></use></svg></span><span style="font-size: 13px; font-weight: 900; color: #3B4F6B;">Notify</span></div><div style="position: absolute; left: 200px; top: 76px; width: 120px; display: flex; flex-direction: column; align-items: center; gap: 8px; animation: pop .5s 6.5s both;"><span style="font-size: 14px; font-weight: 900; color: #0B2545;">12:00</span><span style="width: 44px; height: 44px; border-radius: 22px; background: #C2410C; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" style="color: #FFFFFF;"><use href="#dc-phone"></use></svg></span><span style="font-size: 13px; font-weight: 900; color: #3B4F6B;">Follow up</span></div><div style="position: absolute; left: 380px; top: 76px; width: 120px; display: flex; flex-direction: column; align-items: center; gap: 8px; animation: pop .5s 8s both;"><span style="font-size: 14px; font-weight: 900; color: #0B2545;">14:00</span><span style="width: 44px; height: 44px; border-radius: 22px; background: #C2410C; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" style="color: #FFFFFF;"><use href="#dc-mail"></use></svg></span><span style="font-size: 13px; font-weight: 900; color: #3B4F6B;">Follow up</span></div><div style="position: absolute; left: 560px; top: 76px; width: 120px; display: flex; flex-direction: column; align-items: center; gap: 8px; animation: pop .5s 9.5s both;"><span style="font-size: 14px; font-weight: 900; color: #0B2545;">16:00</span><span style="width: 44px; height: 44px; border-radius: 22px; background: #C2410C; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" style="color: #FFFFFF;"><use href="#dc-phone"></use></svg></span><span style="font-size: 13px; font-weight: 900; color: #3B4F6B;">Follow up</span></div><span class="tg" style="position: absolute; left: 240px; top: 30px; background: #0B2545; animation: pop .5s 7s both;">Every 2 hours</span><div style="position: absolute; left: 40px; top: 230px; width: 620px; height: 80px; border-radius: 16px; background: #FCE3CC; border: 3px solid #C2410C; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 11s both;"><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Posts, emails and phone calls</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">Until the customer responds.</span></div><div style="position: absolute; left: 40px; top: 326px; width: 620px; height: 60px; border-radius: 20px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; gap: 18px; padding: 0 30px; animation: up .7s 13s both;"><span style="font-size: 17px; font-weight: 900;">Tier 1 or not: every 2 hours.</span></div></div>
+<div class="tc2">
+<div class="eb" style="color: #C2410C;">Follow up &middot; 1 of 3</div>
+<div class="tt" style="font-size: 26px;">Every 2 hours</div>
+<div class="bl" style="animation: fromR .6s 6s both;"><span class="bn" style="background: #FCE3CC; color: #C2410C;">1</span><span class="bt" style="font-size: 18px;">Follow up every 2 hours until the customer responds.</span></div>
+<div class="bl" style="animation: fromR .6s 11s both;"><span class="bn" style="background: #FCE3CC; color: #C2410C;">2</span><span class="bt" style="font-size: 18px;">Use posts, emails and phone calls.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 18s 22s both;">
+<div class="shot" style="background: #DDF3F1; display: block;"><div style="position: absolute; left: 40px; top: 30px; width: 620px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">The PE needs the customer to&hellip;</span><div class="row" style="height: 56px; font-size: 18px; animation: up .5s 23s both;"><svg width="22" height="22" style="flex-shrink: 0;"><use href="#dc-check"></use></svg>Whitelist our IPs</div><div class="row" style="height: 56px; font-size: 18px; animation: up .5s 24.3s both;"><svg width="22" height="22" style="flex-shrink: 0;"><use href="#dc-check"></use></svg>Confirm the origin site is up</div><div class="row" style="height: 56px; font-size: 18px; animation: up .5s 25.6s both;"><svg width="22" height="22" style="flex-shrink: 0;"><use href="#dc-check"></use></svg>Whitelist a user agent</div><div class="row" style="height: 56px; font-size: 18px; animation: up .5s 26.9s both;"><svg width="22" height="22" style="flex-shrink: 0;"><use href="#dc-check"></use></svg>And so on&hellip;</div></div><div style="position: absolute; left: 40px; top: 326px; width: 620px; height: 60px; border-radius: 20px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; gap: 18px; padding: 0 30px; animation: up .7s 30s both;"><span style="font-size: 16px; font-weight: 900;">MotionPoint at fault? Keep the customer updated as PE shares news.</span></div></div>
+<div class="tc2">
+<div class="eb" style="color: #0F7C7A;">Act &middot; 2 of 3</div>
+<div class="tt" style="font-size: 26px;">Act on the PE&rsquo;s instructions</div>
+<div class="bl" style="animation: fromR .6s 23.5s both;"><span class="bn" style="background: #DDF3F1; color: #0F7C7A;">1</span><span class="bt" style="font-size: 18px;">Pass on exactly what the PE needs the customer to do.</span></div>
+<div class="bl" style="animation: fromR .6s 27s both;"><span class="bn" style="background: #DDF3F1; color: #0F7C7A;">2</span><span class="bt" style="font-size: 18px;">Customer at fault: follow up until it&rsquo;s resolved.</span></div>
+<div class="bl" style="animation: fromR .6s 30s both;"><span class="bn" style="background: #DDF3F1; color: #0F7C7A;">3</span><span class="bt" style="font-size: 18px;">MotionPoint at fault: keep the customer updated.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 18s 40s both;">
+<div class="shot" style="background: #F3F6FB; display: block;"><div style="position: absolute; left: 30px; top: 50px; width: 204px; height: 300px; border-radius: 16px; background: #DCE7F7; border: 3px solid #1466F0; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 41s both;"><span class="sn" style="background: #1466F0;">1</span><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Talking internally</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">Status stays Pending. Follow up every day until resolved.</span></div><div style="position: absolute; left: 248px; top: 50px; width: 204px; height: 300px; border-radius: 16px; background: #DDF3F1; border: 3px solid #0F7C7A; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 43.5s both;"><span class="sn" style="background: #0F7C7A;">2</span><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Wants more detail</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">Technical? Arrange a call with PE and the customer.</span></div><div style="position: absolute; left: 466px; top: 50px; width: 204px; height: 300px; border-radius: 16px; background: #FFF1F0; border: 3px solid #B42318; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 46s both;"><span class="sn" style="background: #B42318;">3</span><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Still down after a month</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">Confirm with the CXM before closing. Suggest pointing the translated site to the origin, but the CXM decides.</span></div></div>
+<div class="tc2">
+<div class="eb" style="color: #1466F0;">Responses &middot; 3 of 3</div>
+<div class="tt" style="font-size: 26px;">What comes back?</div>
+<div class="bl" style="animation: fromR .6s 41.5s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">1</span><span class="bt" style="font-size: 18px;">They&rsquo;re talking internally: Pending, follow up daily.</span></div>
+<div class="bl" style="animation: fromR .6s 44s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">2</span><span class="bt" style="font-size: 18px;">They want detail: a call with PE, if technical.</span></div>
+<div class="bl" style="animation: fromR .6s 46.5s both;"><span class="bn" style="background: #DCE7F7; color: #1466F0;">3</span><span class="bt" style="font-size: 18px;">Down for a month: confirm with the CXM before closing. Suggest pointing the translated site to the origin; the CXM decides.</span></div>
+</div>
+</div>
+</div>
+</div>
+</template>
+
+<!-- ============ SCENE 6 · RESOLVE ============ -->
+<template id="scene-6">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Part 6: Resolve and close</div><div class="h2s">Notify, document, and only then close.</div></div>
+<div class="sc" style="left: 40px; width: 592px; background: #E5F4DE; color: #2F7A22; animation: up .6s 1.4s both, litRing 22s 4s both;"><div class="sr"><span class="sn" style="background: #2F7A22;">1</span><span class="tg" style="background: #2F7A22;">Platform Ops</span></div><div class="st">Resolved: notify and hand off</div><svg class="mk" width="28" height="28" style="animation: pop .5s 25.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="sc" style="left: 648px; width: 592px; background: #E3E9F2; color: #0B2545; animation: up .6s 1.6s both, litRing 22s 26s both;"><div class="sr"><span class="sn" style="background: #0B2545;">2</span><span class="tg" style="background: #0B2545;">If requested</span></div><div class="st">RCA or incident report</div><svg class="mk" width="28" height="28" style="animation: pop .5s 47.4s both;"><use href="#dc-check"></use></svg></div>
+<div class="panel" style="animation: up .7s 2.2s both;">
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #8A99AD; animation: fadeOut .5s 3.8s forwards;">Wrapping it up.</div>
+<div class="win" style="animation: win 22s 4s both;">
+<div class="shot" style="background: #E5F4DE; display: block;"><div style="position: absolute; left: 30px; top: 40px; width: 190px; height: 130px; border-radius: 16px; background: #E5F4DE; border: 3px solid #2F7A22; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 4.8s both;"><svg width="28" height="28" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Resolved</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">Notify the P1 chat</span></div><svg width="40" height="24" style="position: absolute; left: 226px; top: 93px; animation: fadeIn .4s 6s both;"><path d="M2 12 H36 M28 4 L37 12 L28 20" stroke="#94A3B8" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg><div style="position: absolute; left: 272px; top: 40px; width: 190px; height: 130px; border-radius: 16px; background: #E3E9F2; border: 3px solid #0B2545; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 6.6s both;"><svg width="28" height="28" style="flex-shrink: 0; color: #0B2545;"><use href="#dc-edit"></use></svg><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Document</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">Everything in the case</span></div><svg width="40" height="24" style="position: absolute; left: 468px; top: 93px; animation: fadeIn .4s 8s both;"><path d="M2 12 H36 M28 4 L37 12 L28 20" stroke="#94A3B8" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg><div style="position: absolute; left: 514px; top: 40px; width: 156px; height: 130px; border-radius: 16px; background: #DDF3F1; border: 3px solid #0F7C7A; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 8.6s both;"><svg width="28" height="28" style="flex-shrink: 0; color: #0F7C7A;"><use href="#dc-server"></use></svg><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Platform Ops</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">Monitoring, then Closed</span></div><div style="position: absolute; left: 30px; top: 200px; width: 640px; height: 80px; border-radius: 20px; background: #7C2D12; color: #FFFFFF; display: flex; align-items: center; gap: 18px; padding: 0 30px; animation: up .7s 12s both;"><svg width="30" height="30" style="flex-shrink: 0; color: #F6C453;"><use href="#dc-warn"></use></svg><span style="font-size: 17px; font-weight: 900; line-height: 1.4;">Only closed once everything is resolved.</span></div><div style="position: absolute; left: 30px; top: 300px; width: 640px; height: 84px; border-radius: 16px; background: #DCE7F7; border: 3px solid #1466F0; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 15s both;"><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Still working on it?</span><span style="font-size: 15px; font-weight: 700; color: #3B4F6B; line-height: 1.35;">Follow up, and move the due date to the next day as needed. All outage cases are Critical.</span></div></div>
+<div class="tc2">
+<div class="eb" style="color: #2F7A22;">Resolve &middot; 1 of 2</div>
+<div class="tt" style="font-size: 26px;">Resolved: notify, document, hand off</div>
+<div class="bl" style="animation: fromR .6s 5.5s both;"><span class="bn" style="background: #E5F4DE; color: #2F7A22;">1</span><span class="bt" style="font-size: 18px;">Tell everyone in the P1 chat it&rsquo;s resolved.</span></div>
+<div class="bl" style="animation: fromR .6s 7s both;"><span class="bn" style="background: #E5F4DE; color: #2F7A22;">2</span><span class="bt" style="font-size: 18px;">Document the case.</span></div>
+<div class="bl" style="animation: fromR .6s 9s both;"><span class="bn" style="background: #E5F4DE; color: #2F7A22;">3</span><span class="bt" style="font-size: 18px;">Send it to Platform Ops: they set up monitoring alerts and close it.</span></div>
+</div>
+</div>
+<div class="win" style="animation: win 22s 26s both;">
+<div class="shot" style="background: #F3F6FB; display: block;"><div style="position: absolute; left: 30px; top: 30px; width: 310px; height: 350px; border-radius: 16px; background: #DDF3F1; border: 3px solid #0F7C7A; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 27s both;"><span class="tg" style="background: #0F7C7A; align-self: flex-start;">Non-formal RCA</span><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Root cause analysis</span><div class="row" style="height: auto; min-height: 50px; padding: 8px 10px; font-size: 14px; box-shadow: none; animation: up .4s 28s both;"><span class="sn" style="background: #0F7C7A; width: 24px; height: 24px; font-size: 12px;">1</span><span>The case goes to the PE lead.</span></div><div class="row" style="height: auto; min-height: 50px; padding: 8px 10px; font-size: 14px; box-shadow: none; animation: up .4s 29.3s both;"><span class="sn" style="background: #0F7C7A; width: 24px; height: 24px; font-size: 12px;">2</span><span>They update it with the RCA.</span></div><div class="row" style="height: auto; min-height: 50px; padding: 8px 10px; font-size: 14px; box-shadow: none; animation: up .4s 30.6s both;"><span class="sn" style="background: #0F7C7A; width: 24px; height: 24px; font-size: 12px;">3</span><span>Provide it to the customer.</span></div><div class="row" style="height: auto; min-height: 50px; padding: 8px 10px; font-size: 14px; box-shadow: none; animation: up .4s 31.9s both;"><span class="sn" style="background: #0F7C7A; width: 24px; height: 24px; font-size: 12px;">4</span><span>Set the case to Closed.</span></div></div><div style="position: absolute; left: 360px; top: 30px; width: 310px; height: 350px; border-radius: 16px; background: #E3E9F2; border: 3px solid #0B2545; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 6px; animation: pop .55s 33s both;"><span class="tg" style="background: #0B2545; align-self: flex-start;">Formal incident report</span><span class="disp" style="font-size: 19px; font-weight: 700; color: #0B2545; line-height: 1.25;">Incident report</span><div class="row" style="height: auto; min-height: 50px; padding: 8px 10px; font-size: 14px; box-shadow: none; animation: up .4s 34s both;"><span class="sn" style="background: #0B2545; width: 24px; height: 24px; font-size: 12px;">1</span><span>Check with the PE leads: can it be generated with Claude (AI)?</span></div><div class="row" style="height: auto; min-height: 50px; padding: 8px 10px; font-size: 14px; box-shadow: none; animation: up .4s 35.3s both;"><span class="sn" style="background: #0B2545; width: 24px; height: 24px; font-size: 12px;">2</span><span>Once generated, it&rsquo;s reviewed and validated.</span></div><div class="row" style="height: auto; min-height: 50px; padding: 8px 10px; font-size: 14px; box-shadow: none; animation: up .4s 36.6s both;"><span class="sn" style="background: #0B2545; width: 24px; height: 24px; font-size: 12px;">3</span><span>SU or the CXM shares it with the customer.</span></div><div class="row" style="height: auto; min-height: 50px; padding: 8px 10px; font-size: 14px; box-shadow: none; animation: up .4s 37.9s both;"><span class="sn" style="background: #0B2545; width: 24px; height: 24px; font-size: 12px;">4</span><span>Set the case to Closed.</span></div></div></div>
+<div class="tc2">
+<div class="eb" style="color: #0B2545;">If requested &middot; 2 of 2</div>
+<div class="tt" style="font-size: 26px;">RCA or incident report</div>
+<div class="bl" style="animation: fromR .6s 28s both;"><span class="bn" style="background: #E3E9F2; color: #0B2545;">1</span><span class="bt" style="font-size: 18px;">Non-formal RCA: the PE lead adds it to the case, you share it, then Closed.</span></div>
+<div class="bl" style="animation: fromR .6s 34s both;"><span class="bn" style="background: #E3E9F2; color: #0B2545;">2</span><span class="bt" style="font-size: 18px;">Formal incident report: check with the PE leads, get it reviewed, then share it and close.</span></div>
+</div>
+</div>
+</div>
+</div>
+</template>
+
+<!-- ============ SCENE 7 · PRACTICE ============ -->
+<template id="scene-7">
+<div style="position: absolute; left: 0; top: 72px; width: 1280px; height: 648px;">
+<div class="sh" style="animation: up .6s .2s both;"><div class="h2">Part 7: Practice. What would you do?</div><div class="h2s">Think of your answer before it appears.</div></div>
+<div style="position: absolute; left: 160px; top: 80px; width: 960px; height: 520px; animation: win 10s 4s both;"><div class="wc" style="left: 0; top: 0; width: 960px; height: 190px; padding: 26px 32px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Case 1</span><span class="disp" style="font-size: 26px; font-weight: 600; color: #0B2545; line-height: 1.35;">Tier 1 customer (24/7 Entitlement). The translated site loads in English, and MotionPoint is at fault.</span></div><div style="position: absolute; left: 0; top: 220px; width: 960px; min-height: 120px; border-radius: 18px; background: #FFF1F0; border: 3px solid #B42318; padding: 22px 28px; display: flex; align-items: center; gap: 18px; animation: pop .5s 9s both;"><svg width="40" height="40" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span style="font-size: 23px; font-weight: 900; color: #0B2545; line-height: 1.4;">Full P1 procedure: notify the Emergency POCs, open the P1 Teams chat, follow up every 2 hours.</span></div></div>
+<div style="position: absolute; left: 160px; top: 80px; width: 960px; height: 520px; animation: win 10s 14s both;"><div class="wc" style="left: 0; top: 0; width: 960px; height: 190px; padding: 26px 32px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Case 2</span><span class="disp" style="font-size: 26px; font-weight: 600; color: #0B2545; line-height: 1.35;">Tier 1 customer. Their origin site is down because of their own server.</span></div><div style="position: absolute; left: 0; top: 220px; width: 960px; min-height: 120px; border-radius: 18px; background: #FCE3CC; border: 3px solid #C2410C; padding: 22px 28px; display: flex; align-items: center; gap: 18px; animation: pop .5s 19s both;"><svg width="40" height="40" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span style="font-size: 23px; font-weight: 900; color: #0B2545; line-height: 1.4;">No P1 procedure: make the customer aware, and follow up every 2 hours until it&rsquo;s resolved.</span></div></div>
+<div style="position: absolute; left: 160px; top: 80px; width: 960px; height: 520px; animation: win 10s 24s both;"><div class="wc" style="left: 0; top: 0; width: 960px; height: 190px; padding: 26px 32px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Case 3</span><span class="disp" style="font-size: 26px; font-weight: 600; color: #0B2545; line-height: 1.35;">Not Tier 1. PE needs the customer to whitelist our IPs.</span></div><div style="position: absolute; left: 0; top: 220px; width: 960px; min-height: 120px; border-radius: 18px; background: #DDF3F1; border: 3px solid #0F7C7A; padding: 22px 28px; display: flex; align-items: center; gap: 18px; animation: pop .5s 29s both;"><svg width="40" height="40" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span style="font-size: 23px; font-weight: 900; color: #0B2545; line-height: 1.4;">Notify the Emergency POCs, pass on the IP list, and follow up every 2 hours.</span></div></div>
+<div style="position: absolute; left: 160px; top: 80px; width: 960px; height: 520px; animation: win 10s 34s both;"><div class="wc" style="left: 0; top: 0; width: 960px; height: 190px; padding: 26px 32px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Case 4</span><span class="disp" style="font-size: 26px; font-weight: 600; color: #0B2545; line-height: 1.35;">A customer opens a case: their translated site is down. It came in as Standard.</span></div><div style="position: absolute; left: 0; top: 220px; width: 960px; min-height: 120px; border-radius: 18px; background: #FFF1F0; border: 3px solid #B42318; padding: 22px 28px; display: flex; align-items: center; gap: 18px; animation: pop .5s 39s both;"><svg width="40" height="40" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span style="font-size: 23px; font-weight: 900; color: #0B2545; line-height: 1.4;">Same logic as a PE case. Change the Priority to Critical, and move the due date to the same day.</span></div></div>
+<div style="position: absolute; left: 160px; top: 80px; width: 960px; height: 520px; animation: win 10s 44s both;"><div class="wc" style="left: 0; top: 0; width: 960px; height: 190px; padding: 26px 32px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Case 5</span><span class="disp" style="font-size: 26px; font-weight: 600; color: #0B2545; line-height: 1.35;">Two hours after your email, no reply.</span></div><div style="position: absolute; left: 0; top: 220px; width: 960px; min-height: 120px; border-radius: 18px; background: #FCE3CC; border: 3px solid #C2410C; padding: 22px 28px; display: flex; align-items: center; gap: 18px; animation: pop .5s 49s both;"><svg width="40" height="40" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span style="font-size: 23px; font-weight: 900; color: #0B2545; line-height: 1.4;">Follow up again: post, email and phone. Every 2 hours until they respond.</span></div></div>
+<div style="position: absolute; left: 160px; top: 80px; width: 960px; height: 520px; animation: win 10s 54s both;"><div class="wc" style="left: 0; top: 0; width: 960px; height: 190px; padding: 26px 32px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Case 6</span><span class="disp" style="font-size: 26px; font-weight: 600; color: #0B2545; line-height: 1.35;">The customer replies that their IT team is working on it.</span></div><div style="position: absolute; left: 0; top: 220px; width: 960px; min-height: 120px; border-radius: 18px; background: #DCE7F7; border: 3px solid #1466F0; padding: 22px 28px; display: flex; align-items: center; gap: 18px; animation: pop .5s 59s both;"><svg width="40" height="40" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span style="font-size: 23px; font-weight: 900; color: #0B2545; line-height: 1.4;">Keep it Pending, and follow up every day until it&rsquo;s resolved.</span></div></div>
+<div style="position: absolute; left: 160px; top: 80px; width: 960px; height: 520px; animation: win 10s 64s both;"><div class="wc" style="left: 0; top: 0; width: 960px; height: 190px; padding: 26px 32px; display: flex; flex-direction: column; gap: 12px;"><span class="lab">Case 7</span><span class="disp" style="font-size: 26px; font-weight: 600; color: #0B2545; line-height: 1.35;">It&rsquo;s resolved, and the customer asks for a formal incident report.</span></div><div style="position: absolute; left: 0; top: 220px; width: 960px; min-height: 120px; border-radius: 18px; background: #E3E9F2; border: 3px solid #0B2545; padding: 22px 28px; display: flex; align-items: center; gap: 18px; animation: pop .5s 69s both;"><svg width="40" height="40" style="flex-shrink: 0;"><use href="#dc-check"></use></svg><span style="font-size: 23px; font-weight: 900; color: #0B2545; line-height: 1.4;">Check with the PE leads if it can be generated with Claude. After review, SU or the CXM shares it, then Closed.</span></div></div>
+<div style="position: absolute; left: 40px; top: 66px; width: 1200px; height: 566px; border-radius: 22px; background: #DCE7F7; padding: 22px 26px; display: flex; flex-direction: column; gap: 10px; animation: pop .6s 76s both;"><span class="disp" style="font-size: 26px; font-weight: 700; color: #0B2545; margin-bottom: 4px;">Recap: outage cases</span><div class="row" style="height: 64px; font-size: 18px; font-weight: 700; animation: up .5s 77.5s both;"><span class="sn" style="background: #B42318;">1</span><span><b>Always Critical.</b> Standard? Change it. Customer case? Same logic</span></div><div class="row" style="height: 64px; font-size: 18px; font-weight: 700; animation: up .5s 79.7s both;"><span class="sn" style="background: #B42318;">2</span><span><b>Notify the Emergency POCs:</b> BE &rsaquo; Related Contacts</span></div><div class="row" style="height: 64px; font-size: 18px; font-weight: 700; animation: up .5s 81.9s both;"><span class="sn" style="background: #B42318;">3</span><span><b>Tier 1 + MotionPoint at fault:</b> the P1 Teams chat, kept updated</span></div><div class="row" style="height: 64px; font-size: 18px; font-weight: 700; animation: up .5s 84.1s both;"><span class="sn" style="background: #B42318;">4</span><span><b>Follow up every 2 hours</b> until the customer responds</span></div><div class="row" style="height: 64px; font-size: 18px; font-weight: 700; animation: up .5s 86.3s both;"><span class="sn" style="background: #B42318;">5</span><span><b>Act on the PE&rsquo;s instructions</b> and keep the customer updated</span></div><div class="row" style="height: 64px; font-size: 18px; font-weight: 700; animation: up .5s 88.5s both;"><span class="sn" style="background: #B42318;">6</span><span><b>Resolved:</b> notify, document, Platform Ops closes. RCA if requested</span></div><div style="margin-top: auto; padding: 14px 20px; border-radius: 14px; background: #0B2545; color: #FFFFFF; font-size: 20px; font-weight: 900; animation: pop .5s 92s both;">Thanks for watching! Speed and communication first, then the paperwork.</div></div>
+</div>
+</template>
+
+<div id="sceneHost" style="position: absolute; inset: 0;"></div>
+
+<!-- ============ COVER ============ -->
+<div id="cover">
+<div style="position: absolute; inset: 0; background: #0B2545; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; text-align: center; color: #FFFFFF;">
+<div style="font-size: 16px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; color: #8FD16F;">MotionPoint Support &middot; New Agent Training</div>
+<h1 class="disp" style="margin: 0; font-size: 64px; line-height: 1.05; font-weight: 700;">Outage Cases from PE</h1>
+<p style="margin: 0; font-size: 22px; color: #C9D6E8; max-width: 800px;">Which outage procedure to follow, how to notify the customer, run the P1 chat, follow up and close. About 7 minutes, with background music.</p>
+<button type="button" id="coverPlay" style="margin-top: 14px; height: 72px; padding: 0 40px; border-radius: 36px; border: none; background: #1466F0; color: #FFFFFF; font-family: 'Lexend', sans-serif; font-size: 26px; font-weight: 600; display: flex; align-items: center; gap: 14px; cursor: pointer; box-shadow: 0 16px 40px rgba(20,102,240,.45);">
+<svg width="26" height="26" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z" fill="#FFFFFF"></path></svg>Play</button>
+</div>
+</div>
+
+</div>
+
+<!-- ===================== SUBTITLES ===================== -->
+<div style="height: 70px; flex-shrink: 0; background: #0B1626; display: flex; align-items: center; justify-content: center; padding: 0 48px; position: relative; overflow: hidden;">
+<div id="subs" style="display: contents;"></div>
+</div>
+
+<!-- ===================== CONTROLS ===================== -->
+<div style="height: 80px; flex-shrink: 0; background: #0E1B2E; display: flex; flex-direction: column;">
+<div style="height: 6px; background: #1D2E48;"><div id="prog" style="height: 6px; width: 0%; background: #5DB645;"></div></div>
+<div style="flex-grow: 1; display: flex; align-items: center; gap: 10px; padding: 0 20px;">
+<button type="button" class="ctl main" id="playBtn" aria-label="Play">
+<span id="icoPause" style="display: contents;" hidden><svg width="18" height="18" viewBox="0 0 24 24"><rect x="6" y="4.5" width="4" height="15" rx="1" fill="#FFFFFF"></rect><rect x="14" y="4.5" width="4" height="15" rx="1" fill="#FFFFFF"></rect></svg></span>
+<span id="icoPlay" style="display: contents;"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z" fill="#FFFFFF"></path></svg></span>
+<span id="playLabel">Play</span>
+</button>
+<button type="button" class="ctl" id="replayBtn" aria-label="Replay from start">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EEF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg>
+</button>
+<button type="button" class="ctl" id="back10Btn" aria-label="Back 10 seconds" title="Back 10 seconds (Left arrow)">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EEF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 17l-5-5 5-5"></path><path d="M18 17l-5-5 5-5"></path></svg>
+<span>10s</span>
+</button>
+<button type="button" class="ctl" id="fwd10Btn" aria-label="Forward 10 seconds" title="Forward 10 seconds (Right arrow)">
+<span>10s</span>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EEF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 17l5-5-5-5"></path><path d="M6 17l5-5-5-5"></path></svg>
+</button>
+<button type="button" class="ctl" id="musicBtn" aria-label="Music on" aria-pressed="true">
+<span id="icoMusicOn" style="display: contents;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8FD16F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle></svg></span>
+<span id="icoMusicOff" style="display: contents;" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A9B8CC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle><path d="M3 3l18 18"></path></svg></span>
+<span id="musicLabel" style="display:none">Music on</span>
+</button>
+<button type="button" class="ctl" id="subsBtn" aria-label="Hide captions" aria-pressed="true">
+<svg width="22" height="18" viewBox="0 0 26 20" fill="none" id="subsIcon" stroke="#8FD16F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1.5" y="1.5" width="23" height="17" rx="3"></rect><path d="M11 8.2a3 3 0 1 0 0 3.6"></path><path d="M19 8.2a3 3 0 1 0 0 3.6"></path></svg>
+</button>
+<button type="button" class="ctl" id="prevBtn" aria-label="Previous scene">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EEF8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+</button>
+<button type="button" class="ctl" id="nextBtn" aria-label="Next scene">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EEF8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+</button>
+<div style="width: 1px; height: 30px; background: #2A3E5C; margin: 0 4px;"></div>
+<div style="display: flex; gap: 4px; flex-grow: 1; overflow: hidden;">
+<span id="chapters" style="display: contents;"></span>
+</div>
+<div style="font-size: 14px; font-weight: 700; color: #A9B8CC; white-space: nowrap; font-variant-numeric: tabular-nums;" id="timeLabel">0:00</div>
+</div>
+</div>
+
+
+</div>
+</div>
+<script>
+const STEP_HTML = "<div style=\"height: 52px; padding: 0 18px 0 6px; border-radius: 26px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; gap: 10px; box-shadow: 0 6px 16px rgba(11,37,69,.22); animation: pop 0.78s ease both;\">\n<span class=\"disp\" style=\"width: 40px; height: 40px; border-radius: 20px; background: #5DB645; color: #0B2545; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700;\">{{st.n}}</span>\n<span style=\"font-size: 15px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase;\">Part {{st.n}} of 7</span>\n</div>";
+const SUB_OPEN = "<div style=\"position: absolute; left: 48px; right: 48px; top: 0; height: 70px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 22px; line-height: 1.3; font-weight: 700; color: #F4F7FB; animation: up 0.7s ease both;\">";
+function fit(){ const s = Math.min(window.innerWidth / 1280, window.innerHeight / 870); document.getElementById('fit').style.transform = 'scale(' + s + ')'; }
+window.addEventListener('resize', fit); fit();
+class Player {
+  constructor() {
+    this.state = { scene: 0, el: 0, playing: false, started: false, ended: false, music: true, subsOn: true };
+    this.ctx = null;
+  }
+  durs() { return [26000, 74000, 42000, 58000, 50000, 58000, 50000, 100000]; }
+  subLines() {
+    return [[[0, "Welcome! This video shows how to handle outage cases that come to Support from PE."], [5000, "A PE makes Support aware of an outage, on the origin or translated site, through a case that needs urgent customer coordination."], [9000, "Outages are time-critical, and depend on the customer taking action quickly."], [13000, "You own it. You follow up with the Emergency POCs, and drive the customer response the PE needs."], [19000, "Outage cases are always Critical, and can only be closed once everything is resolved."]],
+      [[0, "Part 1: which procedure do you follow?"], [3000, "First, is this a Tier 1 customer? That means the account carries the 24/7 Entitlement in Salesforce."], [9000, "If yes, check who's at fault."], [13000, "Tier 1, and MotionPoint at fault: follow the full P1 procedure."], [21000, "Tier 1, but the customer is at fault: no P1 procedure. Make the customer aware, and follow up every 2 hours until it's resolved."], [32000, "Not Tier 1: work it as a Critical case, without the P1 chat."], [34000, "Notify the Emergency POCs, and follow up every 2 hours until the customer responds."], [40000, "Act on whatever the PE needs the customer to do."], [44000, "If the customer is at fault, follow up until it's resolved."], [47000, "If MotionPoint is at fault, keep the customer updated as PE shares news."], [56000, "Two more rules."], [57000, "If the outage case came from the customer instead of PE, follow the same logic, Tier 1 or not."], [63000, "And if an outage case came in as Standard, change its priority to Critical, and move the due date to the same day."], [69000, "Every outage case is Critical."]],
+      [[0, "Part 2: what counts as a P1 event?"], [2000, "The site is down, the home page displays blank, or the checkout flow is broken."], [9000, "Customers can't add items to the cart, or the login page is blank or inaccessible."], [14000, "The home page displays broken, or the main logo is broken."], [19000, "Latency or performance problems."], [21500, "The translated site redirects to the origin, or loads in English."], [28000, "A P1 event, a Tier 1 customer, and MotionPoint at fault means the full P1 procedure."], [34000, "Speed and communication matter most, but the paperwork still has to happen."]],
+      [[0, "Part 3: notify the Emergency POCs. This applies to every outage case."], [4000, "The PE creates the case with the URLs, languages, timing, and whose issue it is."], [7500, "The priority is always Critical, and Omnichannel assigns it to you. You're the case owner."], [22000, "Open the customer's Business Entity, and click Related Contacts."], [27000, "Notify every contact checked as Emergency Contact."], [40000, "Email them the details: the site, the languages, since when, and what's broken."], [45000, "And say exactly what you need them to do."], [50000, "It's a Critical case, so move the due date to the next day as needed."]],
+      [[0, "Part 4: the P1 Teams chat. Only for Tier 1 customers, when MotionPoint is at fault."], [5500, "Open a Teams chat, label it P1, and put the case number in the title."], [8000, "Add the PE involved, the Account CXM, and the P1 escalation list."], [11000, "Then link the Salesforce case in the chat, so everyone can reach it quickly."], [26000, "Keep the chat updated throughout. Post every development."], [31000, "Keep PE activity in the chat, not in side conversations."], [34000, "That way all MotionPointers stay in sync until the outage is resolved."]],
+      [[0, "Part 5: follow up, and act."], [4000, "Follow up every 2 hours until the customer responds. Tier 1 or not."], [11000, "Use posts, emails and phone calls."], [22000, "Act on whatever the PE instructs the customer to do: whitelist our IPs, confirm the origin site is up, whitelist a user agent, and so on."], [29000, "If the customer is at fault, follow up until it's resolved."], [32000, "If MotionPoint is at fault, keep the customer updated as PE shares information."], [40000, "What comes back? If they're talking internally, the status stays Pending. Follow up every day until it's resolved."], [44500, "If they want more detail, and it's technical, arrange a call with PE."], [47000, "If the site is still down after a month, confirm with the CXM how to proceed, before setting the case to Closed."], [52000, "You can suggest pointing the translated site to the origin, but let the CXM decide."]],
+      [[0, "Part 6: resolve and close."], [4000, "Once it's resolved, tell everyone in the P1 chat, and document the case."], [9000, "Then send it to Platform Ops. They set up monitoring alerts and close the case."], [12000, "An outage case can only be closed once everything is resolved."], [15000, "Until then, keep following up, and move the due date to the next day as needed. All outage cases are Critical."], [26000, "If the customer asks for a non-formal RCA, a root cause analysis, the case goes to the PE lead to add the RCA. You share it with the customer, and close the case."], [33000, "If they ask for a formal incident report, check with the PE leads whether it can be generated with Claude."], [38000, "Once it's generated and reviewed, Support or the CXM shares it with the customer, and sets the case to Closed."]],
+      [[0, "Part 7: practice. What would you do?"], [4000, "A Tier 1 customer. The translated site loads in English, and MotionPoint is at fault."], [9000, "Full P1 procedure: notify the Emergency POCs, open the P1 Teams chat, and follow up every 2 hours."], [14000, "A Tier 1 customer, whose origin site is down because of their own server."], [19000, "No P1 procedure. Make the customer aware, and follow up every 2 hours until it's resolved."], [24000, "Not Tier 1, and PE needs the customer to whitelist our IPs."], [29000, "Notify the Emergency POCs, pass on the IP list, and follow up every 2 hours."], [34000, "A customer opens a case: their translated site is down, and it came in as Standard."], [39000, "Same logic as a PE case. Change the priority to Critical, and move the due date to the same day."], [44000, "Two hours after your email, there's no reply."], [49000, "Follow up again, by post, email and phone. Every 2 hours until they respond."], [54000, "The customer says their IT team is working on it."], [59000, "Keep it Pending, and follow up every day until it's resolved."], [64000, "It's resolved, and the customer asks for a formal incident report."], [69000, "Check with the PE leads. After review, Support or the CXM shares it, then closes the case."], [76000, "Recap. Outage cases are always Critical, whether they come from PE or the customer. Notify the Emergency POCs from Related Contacts."], [81000, "Tier 1 and MotionPoint at fault: open the P1 Teams chat, and keep it updated."], [84000, "Follow up every 2 hours, act on the PE's instructions, and keep the customer updated."], [88500, "Once resolved: notify, document, and Platform Ops closes it. Thanks for watching!"]]];
+  }
+  labels() { return ["Intro", "Procedure", "P1 events", "Notify", "P1 chat", "Follow up", "Resolve", "Practice"]; }
+
+  /* ---------- original background jazz, synthesized live ---------- */
+  bars() {
+    // [bass walk (MIDI), chord voicing (MIDI)] — ii-V-I in F with turnarounds, 80 bpm swing
+    return [
+      [[43, 46, 50, 47], [58, 62, 65, 69]], // Gm9
+      [[48, 46, 43, 40], [58, 62, 64, 69]], // C13
+      [[41, 45, 48, 49], [57, 60, 64, 67]], // Fmaj9
+      [[50, 48, 45, 44], [54, 60, 64, 69]], // D9
+      [[43, 46, 50, 47], [58, 62, 65, 69]], // Gm9
+      [[48, 46, 43, 40], [58, 62, 64, 69]], // C13
+      [[45, 48, 52, 51], [60, 64, 67, 71]], // Am9
+      [[50, 48, 45, 44], [54, 60, 64, 69]]  // D9
+    ];
+  }
+  hz(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+  initAudio() {
+    if (this.ctx) return true;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      const ctx = new AC();
+      const master = ctx.createGain();
+      master.gain.value = 0;
+      master.connect(ctx.destination);
+      const len = Math.floor(ctx.sampleRate * 1.0);
+      const noise = ctx.createBuffer(1, len, ctx.sampleRate);
+      const data = noise.getChannelData(0);
+      for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      this.ctx = ctx; this.master = master; this.noise = noise;
+      this.beat = 0; this.nextT = 0;
+      return true;
+    } catch (e) { return false; }
+  }
+  pianoNote(m, t, vel, dur) {
+    const c = this.ctx;
+    const f = this.hz(m);
+    const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.setValueAtTime(2600, t); lp.frequency.exponentialRampToValueAtTime(900, t + dur);
+    const g = c.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vel, t + 0.006);
+    g.gain.exponentialRampToValueAtTime(vel * 0.3, t + 0.4);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    lp.connect(g); g.connect(this.master);
+    [[1, 1], [2, 0.28], [3, 0.08]].forEach((h) => {
+      const o = c.createOscillator(); o.type = 'sine'; o.frequency.value = f * h[0];
+      const hg = c.createGain(); hg.gain.value = h[1];
+      o.connect(hg); hg.connect(lp);
+      o.start(t); o.stop(t + dur + 0.05);
+    });
+  }
+  pianoChord(notes, t, vel, dur) {
+    notes.forEach((m, i) => this.pianoNote(m, t + i * 0.018, vel, dur));
+  }
+  tap(t, vol, dur, freq) {
+    const c = this.ctx;
+    const s = c.createBufferSource(); s.buffer = this.noise;
+    const f = c.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = freq;
+    const g = c.createGain();
+    g.gain.setValueAtTime(vol, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    s.connect(f); f.connect(g); g.connect(this.master);
+    s.start(t); s.stop(t + dur + 0.02);
+  }
+  scheduleBeat(i, t) {
+    const spb = 60 / 80;
+    const sw = spb * 2 / 3;
+    const barIx = Math.floor(i / 4) % 8;
+    const bar = this.bars()[barIx];
+    const b = i % 4;
+    this.tap(t, 0.014, 0.25, 7500);
+    if (b === 1 || b === 3) {
+      this.tap(t + sw, 0.01, 0.18, 7500);
+      this.tap(t, 0.012, 0.05, 9500);
+    }
+    if (b === 0) {
+      this.pianoNote(bar[0][0] + 12, t, 0.05, 2.4);
+      this.pianoChord(bar[1], t + 0.03, 0.028, 2.2);
+    }
+    const v = Math.floor(i / 4) % 2;
+    if (b === 2 && v === 0) this.pianoChord(bar[1], t + sw, 0.018, 1.2);
+    if (b === 1 && v === 1) this.pianoChord(bar[1], t + sw, 0.018, 1.2);
+  }
+  schedule() {
+    const c = this.ctx;
+    if (!c || c.state !== 'running' || !this.musicLive) return;
+    if (this.nextT < c.currentTime) this.nextT = c.currentTime + 0.05;
+    while (this.nextT < c.currentTime + 0.3) {
+      this.scheduleBeat(this.beat, this.nextT);
+      this.beat = (this.beat + 1) % 32;
+      this.nextT += 60 / 80;
+    }
+  }
+  musicStart() {
+    if (!this.state.music || !this.initAudio()) return;
+    const c = this.ctx;
+    try { c.resume(); } catch (e) {}
+    if (!this.musicLive) {
+      this.musicLive = true;
+      this.beat = 0;
+      this.nextT = c.currentTime + 0.1;
+      this.master.gain.cancelScheduledValues(c.currentTime);
+      this.master.gain.setValueAtTime(0.0001, c.currentTime);
+      this.master.gain.exponentialRampToValueAtTime(0.55, c.currentTime + 1.5);
+    }
+  }
+  musicStop(fade) {
+    if (!this.ctx) return;
+    const c = this.ctx;
+    this.musicLive = false;
+    const now = c.currentTime;
+    this.master.gain.cancelScheduledValues(now);
+    this.master.gain.setValueAtTime(Math.max(this.master.gain.value, 0.0001), now);
+    this.master.gain.exponentialRampToValueAtTime(0.0001, now + (fade || 0.3));
+  }
+  musicPause() { if (this.ctx) { try { this.ctx.suspend(); } catch (e) {} } }
+  musicResume() { if (this.ctx && this.state.music) { try { this.ctx.resume(); } catch (e) {} } }
+
+  componentDidMount() {
+    this.iv = setInterval(() => this.tick(), 200);
+    this.au = setInterval(() => this.schedule(), 60);
+  }
+  componentWillUnmount() {
+    clearInterval(this.iv); clearInterval(this.au); clearTimeout(this.to);
+    if (this.ctx) { try { this.ctx.close(); } catch (e) {} }
+  }
+  tick() {
+    const s = this.state;
+    if (!s.playing || s.scene < 0) return;
+    const d = this.durs();
+    const el = s.el + 200;
+    if (el >= d[s.scene]) {
+      if (s.scene < d.length - 1) this.setState({ scene: s.scene + 1, el: 0 });
+      else { this.setState({ el: d[s.scene], playing: false, ended: true }); this.musicStop(3); }
+    } else {
+      this.setState({ el: el });
+    }
+  }
+  go(i, off) {
+    off = off || 0;
+    clearTimeout(this.to);
+    this.musicStart();
+    this.musicResume();
+    this.setState({ scene: -1, el: 0 });
+    this.to = setTimeout(() => {
+      this.setState({ scene: i, el: off, started: true, playing: true, ended: false });
+      if (off) setTimeout(() => this.sync(off), 60);
+    }, 40);
+  }
+  sync(off) {
+    try {
+      const st = document.querySelector('.stage');
+      if (!st || !st.getAnimations) return;
+      st.getAnimations({ subtree: true }).forEach((a) => { try { a.currentTime = off; } catch (e) {} });
+    } catch (e) {}
+  }
+  jump(delta) {
+    const d = this.durs();
+    const s = this.state;
+    const cur = s.scene < 0 ? 0 : s.scene;
+    let t = 0;
+    for (let i = 0; i < cur; i++) t += d[i];
+    t += (s.scene < 0 || !s.started) ? 0 : s.el;
+    const total = d.reduce((a, b) => a + b, 0);
+    t = Math.max(0, Math.min(t + delta, total - 500));
+    let i = 0;
+    while (i < d.length - 1 && t >= d[i]) { t -= d[i]; i++; }
+    this.go(i, t);
+  }
+  fmt(ms) {
+    const t = Math.floor(ms / 1000);
+    const m = Math.floor(t / 60);
+    const sec = t % 60;
+    return m + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+  renderVals() {
+    const s = this.state;
+    const d = this.durs();
+    const total = d.reduce((a, b) => a + b, 0);
+    const cur = s.scene < 0 ? 0 : s.scene;
+    let done = 0;
+    for (let i = 0; i < cur; i++) done += d[i];
+    done += s.scene < 0 ? 0 : s.el;
+    const vis = s.started ? s.scene : -2;
+    const chapters = this.labels().map((label, i) => ({
+      label: label,
+      cls: s.started && i === cur ? 'on' : (s.started && i < cur ? 'done' : ''),
+      go: () => this.go(i)
+    }));
+    return {
+      s0: vis === 0, s1: vis === 1, s2: vis === 2, s3: vis === 3, s4: vis === 4, s5: vis === 5, s6: vis === 6, s7: vis === 7,
+      showCover: !s.started,
+      pauseCls: s.playing ? '' : 'paused',
+      isPlaying: s.playing,
+      notPlaying: !s.playing,
+      playLabel: s.playing ? 'Pause' : (s.ended ? 'Replay' : 'Play'),
+      progressW: (Math.min(1, done / total) * 100).toFixed(2) + '%',
+      timeLabel: this.fmt(done) + ' / ' + this.fmt(total),
+      chapters: chapters,
+      steps: [1, 2, 3, 4, 5, 6, 7].map((n) => ({ n: n, on: s.started && s.scene >= 0 && s.scene === n })),
+      showSubs: s.subsOn && s.started,
+      subs: (() => {
+        const L = s.scene >= 0 ? this.subLines()[s.scene] : [];
+        let act = -1;
+        L.forEach((c, i) => { if (s.el >= c[0]) act = i; });
+        return L.map((c, i) => ({ text: c[1], on: i === act }));
+      })(),
+      subsOn: s.subsOn,
+      subsLabel: s.subsOn ? 'Hide captions' : 'Show captions',
+      subsColor: s.subsOn ? '#8FD16F' : '#A9B8CC',
+      toggleSubs: () => this.setState({ subsOn: !this.state.subsOn }),
+      musicOn: s.music,
+      musicOff: !s.music,
+      musicLabel: s.music ? 'Music on' : 'Music off',
+      toggleMusic: () => {
+        const on = !this.state.music;
+        this.setState({ music: on }, () => {
+          if (!on) this.musicStop(0.6);
+          else if (this.state.playing) this.musicStart();
+        });
+      },
+      togglePlay: () => {
+        if (!this.state.started || this.state.ended) this.go(0);
+        else {
+          const playing = !this.state.playing;
+          if (playing) this.musicResume(); else this.musicPause();
+          this.setState({ playing: playing });
+        }
+      },
+      replay: () => this.go(0),
+      back10: () => this.jump(-10000),
+      fwd10: () => this.jump(10000),
+      prev: () => this.go(Math.max(0, cur - 1)),
+      next: () => this.go(Math.min(d.length - 1, cur + 1))
+    };
+  }
+}
+
+Player.prototype.setState = function (obj, cb) { Object.assign(this.state, obj); this.render(); if (cb) cb(); };
+Player.prototype.render = function () {
+  const v = this.renderVals();
+  const $ = (id) => document.getElementById(id);
+  const s = this.state;
+  const vis = s.started ? s.scene : -2;
+  if (vis !== this._vis) {
+    this._vis = vis;
+    const tpl = $('scene-' + vis);
+    $('sceneHost').innerHTML = tpl ? tpl.innerHTML : '';
+  }
+  $('stage').classList.toggle('paused', !s.playing);
+  $('cover').hidden = !v.showCover;
+  const st = v.steps.find((x) => x.on);
+  const stn = st ? st.n : 0;
+  if (stn !== this._step) { this._step = stn; $('steps').innerHTML = stn ? STEP_HTML.split('{{st.n}}').join(String(stn)) : ''; }
+  const sb = v.showSubs ? v.subs.find((x) => x.on) : null;
+  const key = sb ? s.scene + '|' + sb.text : '';
+  if (key !== this._sub) {
+    this._sub = key;
+    $('subs').innerHTML = '';
+    if (sb) { const d = document.createElement('div'); d.innerHTML = SUB_OPEN + '</div>'; d.firstChild.textContent = sb.text; $('subs').appendChild(d.firstChild); }
+  }
+  $('prog').style.width = v.progressW;
+  $('timeLabel').textContent = v.timeLabel;
+  $('playLabel').textContent = v.playLabel;
+  $('playBtn').setAttribute('aria-label', v.playLabel);
+  $('icoPause').hidden = !v.isPlaying; $('icoPlay').hidden = v.isPlaying;
+  $('musicLabel').textContent = v.musicLabel; $('musicBtn').setAttribute('aria-label', v.musicLabel); $('musicBtn').setAttribute('aria-pressed', String(v.musicOn));
+  $('icoMusicOn').hidden = !v.musicOn; $('icoMusicOff').hidden = v.musicOn;
+  $('subsBtn').setAttribute('aria-label', v.subsLabel); $('subsBtn').setAttribute('aria-pressed', String(v.subsOn)); $('subsIcon').setAttribute('stroke', v.subsColor);
+  const ck = v.chapters.map((c) => c.cls).join(',');
+  if (ck !== this._chips) {
+    this._chips = ck;
+    const host = $('chapters'); host.innerHTML = '';
+    v.chapters.forEach((c, i) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'chip ' + c.cls; b.textContent = c.label;
+      b.addEventListener('click', () => this.go(i)); host.appendChild(b);
+    });
+  }
+};
+const P = new Player();
+const call = (k) => () => P.renderVals()[k]();
+document.getElementById('coverPlay').addEventListener('click', call('togglePlay'));
+document.getElementById('playBtn').addEventListener('click', call('togglePlay'));
+document.getElementById('replayBtn').addEventListener('click', call('replay'));
+document.getElementById('prevBtn').addEventListener('click', call('prev'));
+document.getElementById('back10Btn').addEventListener('click', call('back10'));
+document.getElementById('fwd10Btn').addEventListener('click', call('fwd10'));
+document.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') { e.preventDefault(); call('back10')(); } else if (e.key === 'ArrowRight') { e.preventDefault(); call('fwd10')(); } else if (e.key === ' ' && e.target === document.body) { e.preventDefault(); call('togglePlay')(); } });
+document.getElementById('nextBtn').addEventListener('click', call('next'));
+document.getElementById('musicBtn').addEventListener('click', call('toggleMusic'));
+document.getElementById('subsBtn').addEventListener('click', call('toggleSubs'));
+P.render();
+P.componentDidMount();
+
+</script>
+</body>
+</html>
